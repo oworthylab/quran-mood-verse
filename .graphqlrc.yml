@@ -1,0 +1,2 @@
+schema: './src/gql/schema.ts'
+documents: ['./src/**/*.ts', './src/**/*.tsx']

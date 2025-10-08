@@ -1,0 +1,18 @@
+{
+  "css.validate": false,
+  "files.eol": "\n",
+
+  "workbench.colorCustomizations": {
+    "editorRuler.foreground": "#ffffff18"
+  },
+
+  "graphql-config.load.filepath": ".graphqlrc.yml",
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+
+  "cSpell.words": ["oiper"],
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Generate commit messages in Angular conventional commit format: '<type>(<scope>): <short description>'.\n\n- Use only **one type** per commit (e.g., feat, fix, chore).\n- Use only **one scope** per commit; choose the most relevant and concise module, page, or component name.\n- Scope should be short, meaningful, and lowercase (e.g., 'auth', 'dashboard', 'api').\n- Keep the title concise, clear, and under 60 characters.\n- Do **not** use descriptions for small or simple changes (e.g., tailwind class updates, typos).\n- Only add a description when the change includes **significant logic**, **feature development**, or **complex refactoring**.\n- Descriptions must:\n  - Start with a blank line after the title\n  - Use bullet points starting with a dash (-)\n  - Be written in present tense, lowercase, and clearly explain what changed and why\n- Never mix multiple types (e.g., chore + feat) in one commit.\n- Never use multiple scopes (e.g., 'dashboard-project-settings') — pick the most important one.\n- Keep messages readable and professional, avoid unnecessary detail.\n\n🚫 Avoid:\n- Generic titles like 'update styles' or 'fix bug'\n- Long or verbose scopes\n- Including descriptions for visual-only or trivial changes\n\n✅ Good examples:\n- feat(auth): add forgot password form\n- fix(dashboard): correct card layout overflow\n- style(profile): tweak spacing for avatar\n- refactor(api): simplify filter query logic\n\nFinal note: Only include a description if the change is major or complex. For small updates, only the title is required."
+    }
+  ]
+}
