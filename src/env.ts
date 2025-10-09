@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 export const envSchema = z.object({
   NEXT_PUBLIC_ORIGIN: z.string().url().default('http://localhost:3000'),
+
+  GEMINI_API_KEY: z.string(),
   NODE_ENV: z.enum(['development', 'staged', 'production']).default('development'),
 })
 
