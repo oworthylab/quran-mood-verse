@@ -6,6 +6,10 @@ export const clientEnvSchema = z.object({
   NEXT_PUBLIC_ORIGIN: z.string().url().default("http://localhost:3000"),
 
   GEMINI_API_KEY: isServer ? z.string() : z.string().optional(),
+  QURAN_FOUNDATION_CLIENT_ID: isServer ? z.string() : z.string().optional(),
+  QURAN_FOUNDATION_CLIENT_SECRET: isServer ? z.string() : z.string().optional(),
+  QURAN_FOUNDATION_END_POINT: isServer ? z.string().url() : z.string().url().optional(),
+
   NODE_ENV: z.enum(["development", "staged", "production"]).default("development"),
 })
 
