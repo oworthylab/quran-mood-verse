@@ -2,11 +2,16 @@
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Textarea } from "@/components/ui/textarea"
+import {
+  PromptInput,
+  PromptInputAction,
+  PromptInputActions,
+  PromptInputTextarea,
+} from "@/components/ui/prompt-input"
 import { GET_VERSES_BY_MOOD } from "@/gql/queries/verses.query"
 import { useLazyQuery } from "@apollo/client"
-import { Loader2, Sparkles } from "lucide-react"
-import { Fragment, useState } from "react"
+import { ArrowUp, Loader2, Sparkles } from "lucide-react"
+import { useState } from "react"
 
 const MOOD_PRESETS = [
   { label: "Grateful", emoji: "🙏" },
@@ -45,42 +50,46 @@ export function QuranMoodExplorer() {
         </div>
 
         <Card className="mb-8 p-6 shadow-lg">
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="mood-input" className="mb-2 block text-sm font-medium">
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <label htmlFor="mood-input" className="mb-4 block text-center text-lg font-medium">
                 How are you feeling today?
               </label>
-              <Textarea
-                id="mood-input"
-                placeholder="Describe your mood or feelings... (max 200 characters)"
+
+              <PromptInput
                 value={mood}
-                onChange={(e) => setMood(e.target.value.slice(0, 200))}
-                maxLength={200}
-                rows={3}
-                className="resize-none"
-              />
-              <div className="text-muted-foreground mt-1 text-right text-xs">{mood.length}/200</div>
+                onValueChange={(value) => setMood(value.slice(0, 200))}
+                isLoading={loading}
+                onSubmit={() => void handleSubmit(mood)}
+                className="mx-auto max-w-2xl"
+              >
+                <PromptInputTextarea
+                  placeholder="Describe your mood or feelings... (max 200 characters)"
+                  className="placeholder:text-muted-foreground/60 text-base"
+                />
+                <PromptInputActions className="items-center justify-between">
+                  <div className="text-muted-foreground ml-2 text-xs">{mood.length}/200</div>
+                  <PromptInputAction tooltip={loading ? "Finding verses..." : "Find verses"}>
+                    <Button
+                      variant="default"
+                      size="icon"
+                      className="h-10 w-10 rounded-full shadow-md transition-all duration-200 hover:shadow-lg"
+                      disabled={loading || !mood.trim()}
+                    >
+                      {loading ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <ArrowUp className="h-5 w-5" />
+                      )}
+                    </Button>
+                  </PromptInputAction>
+                </PromptInputActions>
+              </PromptInput>
             </div>
 
-            <Button
-              onClick={() => void handleSubmit(mood)}
-              disabled={loading || !mood.trim()}
-              className="w-full"
-              size="lg"
-            >
-              {loading ? (
-                <Fragment>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Finding verses...
-                </Fragment>
-              ) : (
-                "Find Verses"
-              )}
-            </Button>
-
-            <div className="border-t pt-4">
-              <p className="text-muted-foreground mb-3 text-sm">Or choose a mood:</p>
-              <div className="flex flex-wrap gap-2">
+            <div className="border-t pt-6">
+              <p className="text-muted-foreground mb-4 text-center text-sm">Or choose a mood:</p>
+              <div className="flex flex-wrap justify-center gap-3">
                 {MOOD_PRESETS.map((preset) => (
                   <Button
                     key={preset.label}
@@ -91,10 +100,10 @@ export function QuranMoodExplorer() {
                       void handleSubmit(preset.label)
                     }}
                     disabled={loading}
-                    className="gap-2"
+                    className="border-muted-foreground/20 hover:border-primary hover:bg-primary/5 hover:text-primary gap-2 rounded-full px-4 py-2 transition-all duration-200"
                   >
-                    <span>{preset.emoji}</span>
-                    {preset.label}
+                    <span className="text-base">{preset.emoji}</span>
+                    <span className="font-medium">{preset.label}</span>
                   </Button>
                 ))}
               </div>
