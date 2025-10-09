@@ -91,6 +91,19 @@ export default [
 
       'prettier/prettier': 1,
 
+      'no-restricted-imports': [
+        'error',
+        {
+          name: 'next/link',
+          message: 'Please use @/i18n/navigation instead.',
+        },
+        {
+          name: 'next/navigation',
+          importNames: ['redirect', 'permanentRedirect', 'useRouter', 'usePathname'],
+          message: 'Please use @/i18n/navigation instead.',
+        },
+      ],
+
       '@typescript-eslint/no-unused-vars': [
         1,
         {
