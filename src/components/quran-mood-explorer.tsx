@@ -14,12 +14,11 @@ import { ArrowUp, Loader2, Sparkles } from "lucide-react"
 import { useState } from "react"
 
 const MOOD_PRESETS = [
-  { label: "Grateful", emoji: "🙏" },
-  { label: "Hopeful", emoji: "✨" },
-  { label: "Calm", emoji: "🕊️" },
+  { label: "Grateful", emoji: "✨" },
   { label: "Seeking Forgiveness", emoji: "💫" },
   { label: "Anxious", emoji: "😰" },
   { label: "Sad", emoji: "😔" },
+  { label: "Angry", emoji: "😡" },
 ]
 
 export function QuranMoodExplorer() {
@@ -49,67 +48,55 @@ export function QuranMoodExplorer() {
           </p>
         </div>
 
-        <Card className="mb-8 p-6 shadow-lg">
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <label htmlFor="mood-input" className="mb-4 block text-center text-lg font-medium">
-                How are you feeling today?
-              </label>
+        <div className="mx-auto flex max-w-2xl flex-col gap-4">
+          <PromptInput
+            value={mood}
+            onValueChange={(value) => setMood(value.slice(0, 200))}
+            isLoading={loading}
+            onSubmit={() => void handleSubmit(mood)}
+          >
+            <PromptInputTextarea
+              placeholder="How are you feeling today?"
+              className="placeholder:text-muted-foreground/60 text-foreground text-base"
+            />
+            <PromptInputActions className="items-center justify-between">
+              <div className="text-muted-foreground ml-2 text-xs">{mood.length}/200</div>
+              <PromptInputAction tooltip={loading ? "Finding verses..." : "Find verses"}>
+                <Button
+                  variant="default"
+                  size="icon"
+                  className="h-10 w-10 rounded-full shadow-md transition-all duration-200 hover:shadow-lg"
+                  disabled={loading || !mood.trim()}
+                >
+                  {loading ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <ArrowUp className="h-5 w-5" />
+                  )}
+                </Button>
+              </PromptInputAction>
+            </PromptInputActions>
+          </PromptInput>
 
-              <PromptInput
-                value={mood}
-                onValueChange={(value) => setMood(value.slice(0, 200))}
-                isLoading={loading}
-                onSubmit={() => void handleSubmit(mood)}
-                className="mx-auto max-w-2xl"
+          <div className="flex flex-wrap justify-center gap-3">
+            {MOOD_PRESETS.map((preset) => (
+              <Button
+                key={preset.label}
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setMood(preset.label)
+                  void handleSubmit(preset.label)
+                }}
+                disabled={loading}
+                className="border-muted-foreground/20 hover:border-primary hover:bg-primary/5 hover:text-primary gap-2 rounded-full px-4 py-2 transition-all duration-200"
               >
-                <PromptInputTextarea
-                  placeholder="Describe your mood or feelings... (max 200 characters)"
-                  className="placeholder:text-muted-foreground/60 text-base"
-                />
-                <PromptInputActions className="items-center justify-between">
-                  <div className="text-muted-foreground ml-2 text-xs">{mood.length}/200</div>
-                  <PromptInputAction tooltip={loading ? "Finding verses..." : "Find verses"}>
-                    <Button
-                      variant="default"
-                      size="icon"
-                      className="h-10 w-10 rounded-full shadow-md transition-all duration-200 hover:shadow-lg"
-                      disabled={loading || !mood.trim()}
-                    >
-                      {loading ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                      ) : (
-                        <ArrowUp className="h-5 w-5" />
-                      )}
-                    </Button>
-                  </PromptInputAction>
-                </PromptInputActions>
-              </PromptInput>
-            </div>
-
-            <div className="border-t pt-6">
-              <p className="text-muted-foreground mb-4 text-center text-sm">Or choose a mood:</p>
-              <div className="flex flex-wrap justify-center gap-3">
-                {MOOD_PRESETS.map((preset) => (
-                  <Button
-                    key={preset.label}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setMood(preset.label)
-                      void handleSubmit(preset.label)
-                    }}
-                    disabled={loading}
-                    className="border-muted-foreground/20 hover:border-primary hover:bg-primary/5 hover:text-primary gap-2 rounded-full px-4 py-2 transition-all duration-200"
-                  >
-                    <span className="text-base">{preset.emoji}</span>
-                    <span className="font-medium">{preset.label}</span>
-                  </Button>
-                ))}
-              </div>
-            </div>
+                <span className="text-base">{preset.emoji}</span>
+                <span className="font-medium">{preset.label}</span>
+              </Button>
+            ))}
           </div>
-        </Card>
+        </div>
 
         {error && (
           <Card className="bg-destructive/10 border-destructive/20 mb-8 p-4">
