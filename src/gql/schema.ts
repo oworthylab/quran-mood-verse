@@ -21,6 +21,6 @@ export const typeDefs = gql`
 
   type Query {
     _random: Float!
-    getVersesByMood(mood: String!): VerseResponse!
+    getVersesByMood(mood: String!, locale: String): VerseResponse!
   }
 `

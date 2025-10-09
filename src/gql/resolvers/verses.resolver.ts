@@ -67,7 +67,8 @@ interface ApiResponse {
 
 export const versesResolver: Resolvers = {
   Query: {
-    async getVersesByMood(_, { mood }) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async getVersesByMood(_, { mood, locale = "en" }) {
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
       const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash-lite" })
 

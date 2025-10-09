@@ -1,5 +1,6 @@
 "use client"
 
+import { LanguageSwitch } from "@/components/shared/language-switch"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import {
@@ -11,6 +12,7 @@ import {
 import { GET_VERSES_BY_MOOD } from "@/gql/queries/verses.query"
 import { useLazyQuery } from "@apollo/client"
 import { ArrowUp, Loader2, Sparkles } from "lucide-react"
+import { useLocale } from "next-intl"
 import { useState } from "react"
 
 const MOOD_PRESETS = [
@@ -23,6 +25,7 @@ const MOOD_PRESETS = [
 
 export function QuranMoodExplorer() {
   const [mood, setMood] = useState("")
+  const locale = useLocale()
 
   const [getVerses, { loading, error, data }] = useLazyQuery(GET_VERSES_BY_MOOD, {
     errorPolicy: "all",
@@ -30,13 +33,14 @@ export function QuranMoodExplorer() {
 
   async function handleSubmit(moodInput: string) {
     if (!moodInput.trim()) return
-    await getVerses({ variables: { mood: moodInput.trim() } })
+    await getVerses({ variables: { mood: moodInput.trim(), locale } })
   }
 
   const verses = data?.getVersesByMood?.verses || []
 
   return (
     <div className="from-background to-muted/20 min-h-screen bg-gradient-to-b">
+      <LanguageSwitch />
       <div className="container mx-auto max-w-4xl px-4 py-12">
         <div className="mb-12 text-center">
           <div className="mb-4 inline-flex items-center gap-2">
