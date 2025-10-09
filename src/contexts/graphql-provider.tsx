@@ -1,18 +1,18 @@
-'use client'
+"use client"
 
-import { IS_DEV } from '@/env'
-import { from, HttpLink } from '@apollo/client'
+import { IS_DEV } from "@/env"
+import { from, HttpLink } from "@apollo/client"
 import {
   ApolloClient,
   ApolloNextAppProvider,
   InMemoryCache,
-} from '@apollo/client-integration-nextjs'
-import { loadDevMessages } from '@apollo/client/dev'
-import { removeTypenameFromVariables } from '@apollo/client/link/remove-typename'
+} from "@apollo/client-integration-nextjs"
+import { loadDevMessages } from "@apollo/client/dev"
+import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename"
 
 if (IS_DEV) loadDevMessages()
 
-const link = from([removeTypenameFromVariables(), new HttpLink({ uri: '/api/graphql' })])
+const link = from([removeTypenameFromVariables(), new HttpLink({ uri: "/api/graphql" })])
 
 function makeClient() {
   return new ApolloClient({
@@ -21,11 +21,11 @@ function makeClient() {
     cache: new InMemoryCache({ dataIdFromObject: () => false }),
 
     defaultOptions: {
-      watchQuery: { fetchPolicy: 'cache-first', errorPolicy: 'ignore' },
-      query: { fetchPolicy: 'cache-first', errorPolicy: 'ignore' },
+      watchQuery: { fetchPolicy: "cache-first", errorPolicy: "ignore" },
+      query: { fetchPolicy: "cache-first", errorPolicy: "ignore" },
     },
 
-    devtools: { enabled: IS_DEV, name: 'Gql' },
+    devtools: { enabled: IS_DEV, name: "Gql" },
   })
 }
 

@@ -1,6 +1,6 @@
-import { routing } from '@/i18n/routing'
-import { Formats, hasLocale } from 'next-intl'
-import { getRequestConfig } from 'next-intl/server'
+import { routing } from "@/i18n/routing"
+import { Formats, hasLocale } from "next-intl"
+import { getRequestConfig } from "next-intl/server"
 
 // eslint-disable-next-line import/no-default-export
 export default getRequestConfig(async (context) => {
@@ -16,9 +16,9 @@ export default getRequestConfig(async (context) => {
 export const formats = {
   dateTime: {
     short: {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     },
   },
   number: {
@@ -30,8 +30,8 @@ export const formats = {
   },
   list: {
     enumeration: {
-      style: 'long',
-      type: 'conjunction',
+      style: "long",
+      type: "conjunction",
     },
   },
 } satisfies Formats

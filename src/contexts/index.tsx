@@ -1,6 +1,6 @@
-import { Toaster } from '@/components/ui/sonner'
-import { ApolloProvider } from '@/contexts/graphql-provider'
-import { ThemeProvider } from '@/contexts/theme-context'
+import { Toaster } from "@/components/ui/sonner"
+import { ApolloProvider } from "@/contexts/graphql-provider"
+import { ThemeProvider } from "@/contexts/theme-context"
 
 export function Provider({ children }: { children: React.ReactNode }) {
   return (

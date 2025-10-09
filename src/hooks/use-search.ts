@@ -1,17 +1,17 @@
-import { useDebouncedState } from '@/hooks/use-debounced-state'
-import Fuse, { IFuseOptions } from 'fuse.js'
-import { useMemo } from 'react'
+import { useDebouncedState } from "@/hooks/use-debounced-state"
+import Fuse, { IFuseOptions } from "fuse.js"
+import { useMemo } from "react"
 
 export function useSearch<T extends object>(
   data: T[],
   options: {
-    keys: IFuseOptions<T>['keys']
+    keys: IFuseOptions<T>["keys"]
     debounceMS?: number
-    fuseOptions?: Omit<IFuseOptions<T>, 'keys'>
+    fuseOptions?: Omit<IFuseOptions<T>, "keys">
   }
 ) {
   const [searchTerm, setSearchTerm, debouncedSearchTerm] = useDebouncedState(
-    '',
+    "",
     options.debounceMS ?? 30
   )
 

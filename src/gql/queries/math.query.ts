@@ -1,4 +1,4 @@
-import { gql } from '@gql/artifacts/gql'
+import { gql } from "@gql/artifacts/gql"
 
 export const SAMPLE_QUERY = gql(`
   query Mathematics {

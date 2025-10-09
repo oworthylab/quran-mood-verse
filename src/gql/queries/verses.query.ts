@@ -1,4 +1,4 @@
-import { gql } from '@gql/artifacts/gql'
+import { gql } from "@gql/artifacts/gql"
 
 export const GET_VERSES_BY_MOOD = gql(`
   query GetVersesByMood($mood: String!) {

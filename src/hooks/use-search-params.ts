@@ -1,5 +1,5 @@
-import { useSearchParams as useS } from 'next/navigation'
-import { useMemo } from 'react'
+import { useSearchParams as useS } from "next/navigation"
+import { useMemo } from "react"
 
 export function useSearchParams() {
   const searchParams = useS()!
@@ -20,7 +20,7 @@ export function useSearchParams() {
           }
         })
 
-        window.history.replaceState({}, '', url.toString())
+        window.history.replaceState({}, "", url.toString())
       },
       remove: (keys: string | string[]) => {
         const url = new URL(window.location.href)
@@ -30,7 +30,7 @@ export function useSearchParams() {
           url.searchParams.delete(key)
         })
 
-        window.history.replaceState({}, '', url.toString())
+        window.history.replaceState({}, "", url.toString())
       },
     }),
     []

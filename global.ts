@@ -1,8 +1,8 @@
-import { formats } from '@/i18n/request'
-import { routing } from '@/i18n/routing'
-import messages from './src/i18n/messages/en.json'
+import { formats } from "@/i18n/request"
+import { routing } from "@/i18n/routing"
+import messages from "./src/i18n/messages/en.json"
 
-declare module 'next-intl' {
+declare module "next-intl" {
   interface AppConfig {
     Locale: (typeof routing.locales)[number]
     Messages: typeof messages

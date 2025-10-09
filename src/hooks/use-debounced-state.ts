@@ -1,5 +1,5 @@
-import { debounce } from '@/utils/debounce'
-import { useCallback, useRef, useState } from 'react'
+import { debounce } from "@/utils/debounce"
+import { useCallback, useRef, useState } from "react"
 
 export function useDebouncedState<T>(initialValue: T, delay = 50) {
   const [value, setValue] = useState<T>(initialValue)
@@ -18,7 +18,7 @@ export function useDebouncedState<T>(initialValue: T, delay = 50) {
 
   const setValueAndDebounce = useCallback((newValue: React.SetStateAction<T>) => {
     setValue((prev) => {
-      if (typeof newValue === 'function') {
+      if (typeof newValue === "function") {
         const nextValue = (newValue as (prev: T) => T)(prev)
         debouncedSetValueRef.current(nextValue)
         return nextValue

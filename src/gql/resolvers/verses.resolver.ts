@@ -1,5 +1,5 @@
-import { Resolvers } from '@/gql/artifacts/resolvers'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { Resolvers } from "@/gql/artifacts/resolvers"
+import { GoogleGenerativeAI } from "@google/generative-ai"
 
 const SYSTEM_PROMPT = `You are an Islamic scholar assistant helping people find relevant Quranic verses based on their emotional state or mood.
 
@@ -69,12 +69,12 @@ export const versesResolver: Resolvers = {
   Query: {
     async getVersesByMood(_, { mood }) {
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-      const model = genAI.getGenerativeModel({ model: 'models/gemini-2.5-flash-lite' })
+      const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash-lite" })
 
       const result = await model.generateContent({
         contents: [
           {
-            role: 'user',
+            role: "user",
             parts: [
               {
                 text: `
@@ -110,22 +110,22 @@ export const versesResolver: Resolvers = {
       const text = result.response.text()
 
       const verseKeyMatch = text.match(/<verse-keys>([\s\S]*?)<\/verse-keys>/)
-      if (!verseKeyMatch) throw new Error('No verses found for this mood')
+      if (!verseKeyMatch) throw new Error("No verses found for this mood")
 
       const verseKeys = verseKeyMatch[1]
         .trim()
-        .split('\n')
+        .split("\n")
         .map((line) => line.trim())
         .filter((line) => line.match(/^\d+:\d+$/))
 
-      if (verseKeys.length === 0) throw new Error('No verses found for this mood')
+      if (verseKeys.length === 0) throw new Error("No verses found for this mood")
 
       const versePromises = verseKeys.map(async (key) => {
         const response = await fetch(
           `https://api.alquran.cloud/v1/ayah/${key}/editions/quran-uthmani,en.sahih`
         )
 
-        if (!response.ok) throw new Error('EXTERNAL API ERROR')
+        if (!response.ok) throw new Error("EXTERNAL API ERROR")
         const data = (await response.json()) as ApiResponse
 
         if (!data.data || data.data.length < 2) return null
@@ -146,10 +146,10 @@ export const versesResolver: Resolvers = {
 
       const verseResults = await Promise.allSettled(versePromises)
       const verses = verseResults
-        .map((result) => (result.status === 'fulfilled' ? result.value! : null))
+        .map((result) => (result.status === "fulfilled" ? result.value! : null))
         .filter((verse) => verse !== null)
 
-      if (verses.length === 0) throw new Error('No verses could be fetched for this mood')
+      if (verses.length === 0) throw new Error("No verses could be fetched for this mood")
 
       return { verses }
     },

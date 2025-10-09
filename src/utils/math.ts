@@ -7,7 +7,7 @@ export function randInt({ min = 0, max = 100 }): number {
 }
 
 export function randCode(length: number = 6): string {
-  return Array.from({ length }, () => randInt({ max: 9 })).join('')
+  return Array.from({ length }, () => randInt({ max: 9 })).join("")
 }
 
 export function rangeInt({ min = 0, max = 100 }: { min?: number; max?: number }): number[] {

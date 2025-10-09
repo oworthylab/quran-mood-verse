@@ -1,12 +1,12 @@
-import type { Resolvers } from '@gql/artifacts/resolvers'
-import { versesResolver } from '@gql/resolvers/verses.resolver'
-import { GraphQLScalarType, Kind } from 'graphql'
+import type { Resolvers } from "@gql/artifacts/resolvers"
+import { versesResolver } from "@gql/resolvers/verses.resolver"
+import { GraphQLScalarType, Kind } from "graphql"
 
 const DateTime = new GraphQLScalarType({
-  name: 'DateTime',
-  description: 'DateTime custom scalar type',
+  name: "DateTime",
+  description: "DateTime custom scalar type",
   serialize: (value) => (value instanceof Date ? value.toISOString() : null),
-  parseValue: (value) => (typeof value === 'string' ? new Date(value) : null),
+  parseValue: (value) => (typeof value === "string" ? new Date(value) : null),
   parseLiteral: (ast) => (ast.kind === Kind.STRING ? new Date(ast.value) : null),
 })
 

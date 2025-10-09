@@ -3,7 +3,6 @@
     "mquandalle.graphql",
     "graphql.vscode-graphql",
     "graphql.vscode-graphql-syntax",
-    "prisma.prisma",
     "bradlc.vscode-tailwindcss"
   ]
 }

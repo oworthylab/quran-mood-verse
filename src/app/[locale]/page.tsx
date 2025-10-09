@@ -1,7 +1,8 @@
-import { Locale, routing } from '@/i18n/routing'
-import { hasLocale } from 'next-intl'
-import { getTranslations, setRequestLocale } from 'next-intl/server'
-import { notFound } from 'next/navigation'
+import { QuranMoodExplorer } from "@/components/quran-mood-explorer"
+import { Locale, routing } from "@/i18n/routing"
+import { hasLocale } from "next-intl"
+import { setRequestLocale } from "next-intl/server"
+import { notFound } from "next/navigation"
 
 export default async function Index({ params }: { params: Promise<{ locale: Locale }> }) {
   const locale = (await params).locale
@@ -9,7 +10,9 @@ export default async function Index({ params }: { params: Promise<{ locale: Loca
 
   setRequestLocale(locale)
 
-  const t = await getTranslations()
-
-  return <main className="text-center">{t('title')}</main>
+  return (
+    <main>
+      <QuranMoodExplorer />
+    </main>
+  )
 }
