@@ -24,6 +24,9 @@ importers:
       '@as-integrations/next':
         specifier: ^4.0.0
         version: 4.0.0(@apollo/server@5.0.0(graphql@16.11.0))(next@15.5.4(@babel/core@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))
+      '@google/generative-ai':
+        specifier: ^0.24.1
+        version: 0.24.1
       '@graphql-tools/schema':
         specifier: ^10.0.25
         version: 10.0.25(graphql@16.11.0)
@@ -1185,6 +1188,13 @@ packages:
       {
         integrity: sha512-XOMO2Hupl0wdd172Y06h6kLpBz6Dv+J4okPLl4LPtzbr8f66WbIoy4ev98EBuZ6ZK4h5ydTN6XneT4QVpD7cdA==,
       }
+
+  '@google/generative-ai@0.24.1':
+    resolution:
+      {
+        integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==,
+      }
+    engines: { node: '>=18.0.0' }
 
   '@graphql-codegen/add@5.0.3':
     resolution:
@@ -8758,6 +8768,8 @@ snapshots:
   '@formatjs/intl-localematcher@0.6.2':
     dependencies:
       tslib: 2.8.1
+
+  '@google/generative-ai@0.24.1': {}
 
   '@graphql-codegen/add@5.0.3(graphql@16.11.0)':
     dependencies:

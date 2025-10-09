@@ -1,4 +1,5 @@
 import type { Resolvers } from '@gql/artifacts/resolvers'
+import { versesResolver } from '@gql/resolvers/verses.resolver'
 import { GraphQLScalarType, Kind } from 'graphql'
 
 const DateTime = new GraphQLScalarType({
@@ -14,5 +15,6 @@ export const resolvers: Resolvers = {
 
   Query: {
     _random: () => Math.random(),
+    ...versesResolver.Query,
   },
 }
