@@ -1,6 +1,7 @@
 import type { Resolvers } from "@gql/artifacts/resolvers"
 import { versesResolver } from "@gql/resolvers/verses.resolver"
 import { GraphQLScalarType, Kind } from "graphql"
+import { NextRequest } from "next/server"
 
 const DateTime = new GraphQLScalarType({
   name: "DateTime",
@@ -10,7 +11,7 @@ const DateTime = new GraphQLScalarType({
   parseLiteral: (ast) => (ast.kind === Kind.STRING ? new Date(ast.value) : null),
 })
 
-export const resolvers: Resolvers = {
+export const resolvers: Resolvers<{ request: NextRequest; ip: string }> = {
   DateTime,
 
   Query: {

@@ -1,3 +1,4 @@
+import { getClientIp } from "@/lib/ip"
 import { ApolloServer } from "@apollo/server"
 import { startServerAndCreateNextHandler } from "@as-integrations/next"
 import { resolvers } from "@gql/resolvers"
@@ -12,6 +13,8 @@ const server = new ApolloServer({
   schema: applyMiddleware(makeExecutableSchema({ typeDefs, resolvers })),
 })
 
-const handler = startServerAndCreateNextHandler<NextRequest>(server)
+const handler = startServerAndCreateNextHandler<NextRequest>(server, {
+  context: async (request) => ({ request, ip: getClientIp(request) }),
+})
 
 export { handler as GET, handler as POST }

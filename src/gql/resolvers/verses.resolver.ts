@@ -1,5 +1,6 @@
 import { Resolvers } from "@/gql/artifacts/resolvers"
 import { GoogleGenerativeAI } from "@google/generative-ai"
+import { NextRequest } from "next/server"
 
 const SYSTEM_PROMPT = `
 You are an Islamic scholar assistant. Your task is to suggest relevant Quranic verses based on a user's emotional state or mood.
@@ -77,7 +78,7 @@ interface ApiResponse {
   data: AyahData[]
 }
 
-export const versesResolver: Resolvers = {
+export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
   Query: {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async getVersesByMood(_, { mood, locale = "en" }) {
