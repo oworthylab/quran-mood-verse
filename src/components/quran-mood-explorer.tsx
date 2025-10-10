@@ -200,7 +200,7 @@ export function QuranMoodExplorer() {
                     </span>
                   </div>
                   <div className="text-right">
-                    <p className="font-serif text-2xl leading-loose" dir="rtl">
+                    <p className="font-arabic text-3xl" dir="rtl">
                       {verse.text}
                     </p>
                   </div>

@@ -123,7 +123,7 @@ export const versesResolver: Resolvers = {
 
       const versePromises = verseKeys.map(async (key) => {
         const response = await fetch(
-          `https://api.alquran.cloud/v1/ayah/${key}/editions/quran-uthmani,en.sahih`
+          `https://api.alquran.cloud/v1/ayah/${key}/editions/quran-indopak,en.sahih`
         )
 
         if (!response.ok) throw new Error("EXTERNAL API ERROR")

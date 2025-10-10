@@ -8,9 +8,14 @@ import { setRequestLocale } from "next-intl/server"
 
 import { Provider } from "@/contexts"
 import { Inter } from "next/font/google"
+import LocaleFont from "next/font/local"
 import { notFound } from "next/navigation"
 
 const inter = Inter({ subsets: ["latin"], variable: "--ff-inter" })
+const nastaleeq = LocaleFont({
+  variable: "--ff-indopak-nastaleeq",
+  src: "../../../public/fonts/indopak-nastaleeq.ttf",
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_ORIGIN),
@@ -38,6 +43,7 @@ export default async function Layout({ children, params }: LayoutProps) {
         className={[
           "from-background to-muted/20 min-h-screen bg-gradient-to-b font-sans antialiased",
           inter.variable,
+          nastaleeq.variable,
         ].join(" ")}
       >
         <NextIntlClientProvider locale={locale}>
