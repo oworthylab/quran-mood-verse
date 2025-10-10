@@ -1,7 +1,5 @@
 "use client"
 
-/* eslint-disable max-lines */
-
 import { LanguageSwitch } from "@/components/shared/language-switch"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -110,20 +108,15 @@ export function QuranMoodExplorer() {
   const verses = savedVerses.length > 0 ? savedVerses : data?.getVersesByMood?.verses || []
 
   return (
-    <div className="from-background to-muted/20 min-h-screen bg-gradient-to-b">
+    <div>
       <LanguageSwitch />
 
       {verses.length <= 0 ? (
-        <div className="flex min-h-screen flex-col items-center justify-center px-4">
-          <div className="mb-12 text-center">
-            <div className="mb-4 inline-flex items-center gap-2">
-              <Sparkles className="text-primary h-8 w-8" />
-              <h1 className="text-4xl font-bold text-balance">Quran Verse Mood Explorer</h1>
-            </div>
-            <p className="text-muted-foreground text-lg text-pretty">
-              Find spiritual comfort through verses that resonate with your current state of mind
-            </p>
+        <div className="flex min-h-screen flex-col items-center justify-center">
+          <div className="mb-6 inline-flex items-center gap-2 text-center text-2xl">
+            Discover comfort in verses that speak to you
           </div>
+
           <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
             <PromptInput
               value={mood}
@@ -175,29 +168,31 @@ export function QuranMoodExplorer() {
           </div>
         </div>
       ) : (
-        <div className="container mx-auto max-w-4xl px-4 py-12">
-          <div className="mb-8 text-center">
-            <h2 className="mb-2 text-2xl font-semibold">Verses for your soul</h2>
+        <div className="my-8 flex flex-col gap-8">
+          <div className="flex flex-col gap-2 text-center">
+            <h2 className="text-2xl font-semibold">Verses for your soul</h2>
             {currentMood && (
               <p className="text-muted-foreground">
                 Based on your mood: <span className="font-medium">{currentMood}</span>
               </p>
             )}
           </div>
+
           {error && (
-            <Card className="bg-destructive/10 border-destructive/20 mb-8 p-4">
+            <Card className="bg-destructive/10 border-destructive/20 p-4">
               <p className="text-destructive text-sm">
                 {error.message || "Something went wrong while fetching verses"}
               </p>
             </Card>
           )}
-          <div className="space-y-6">
+
+          <div className="flex flex-col gap-6">
             {verses.map((verse) => (
               <Card
                 key={`${verse.surah.number}-${verse.number}`}
                 className="p-6 shadow-md transition-shadow hover:shadow-lg"
               >
-                <div className="space-y-4">
+                <div className="flex flex-col gap-4">
                   <div className="text-muted-foreground flex items-center justify-between text-sm">
                     <span className="font-medium">({verse.surah.name})</span>
                     <span>
@@ -218,7 +213,8 @@ export function QuranMoodExplorer() {
               </Card>
             ))}
           </div>
-          <div className="mt-12 text-center">
+
+          <div className="text-center">
             <Button
               onClick={handleChangeMood}
               variant="outline"

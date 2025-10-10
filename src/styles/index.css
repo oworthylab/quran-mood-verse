@@ -161,6 +161,19 @@
   }
 }
 
+@layer base {
+  :root {
+    --max-container-width: 56rem;
+    --container-x-gap: 2rem;
+  }
+
+  .smart-container {
+    max-width: min(var(--max-container-width), (100% - var(--container-x-gap) * 2));
+    margin-inline: auto;
+    width: 100%;
+  }
+}
+
 @layer utilities {
   .svh {
     height: calc(var(--height) * 1vh);

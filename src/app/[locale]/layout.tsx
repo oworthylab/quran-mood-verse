@@ -38,7 +38,9 @@ export default async function Layout({ children, params }: LayoutProps) {
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={`font-sans antialiased ${amiri.variable}`}>
+      <body
+        className={`from-background to-muted/20 min-h-screen bg-gradient-to-b font-sans antialiased ${amiri.variable}`}
+      >
         <NextIntlClientProvider locale={locale}>
           <Provider>{children}</Provider>
         </NextIntlClientProvider>
