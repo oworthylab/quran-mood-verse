@@ -5,13 +5,22 @@ export const typeDefs = gql`
 
   type Surah {
     number: Int!
-    name: String! # Language Name
+  }
+
+  type Translation {
+    languageId: String!
+    text: String!
+  }
+
+  type Script {
+    name: String!
+    text: String!
   }
 
   type Verse {
     number: Int!
-    text: String!
-    translation: String!
+    scripts: [Script!]!
+    translations: [Translation!]!
     surah: Surah!
   }
 

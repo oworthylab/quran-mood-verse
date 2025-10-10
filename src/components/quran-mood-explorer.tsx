@@ -19,14 +19,25 @@ import { Fragment, useState } from "react"
 import z from "zod"
 
 const verseSchema = z.object({
-  text: z.string(),
-  translation: z.string(),
   number: z.number(),
-  surah: z.object({
-    name: z.string(),
-    number: z.number(),
-  }),
+  surah: z.object({ number: z.number() }),
+
+  scripts: z.array(
+    z.object({
+      name: z.string(),
+      text: z.string(),
+    })
+  ),
+
+  translations: z.array(
+    z.object({
+      languageId: z.string(),
+      text: z.string(),
+    })
+  ),
 })
+
+const localeMap = { en: "english", bn: "bengali" }
 
 const versesSchema = z.array(verseSchema)
 
@@ -95,7 +106,6 @@ export function QuranMoodExplorer() {
 
     try {
       const { data, errors } = await getVerses({ variables: { mood, locale }, errorPolicy: "all" })
-      console.log({ data, errors })
       const error = errors ? errors[0]! : undefined
 
       if (error) {
@@ -121,6 +131,15 @@ export function QuranMoodExplorer() {
   }
 
   const verses = savedVerses.length > 0 ? savedVerses : []
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function getScript(scripts: Verse["scripts"]) {
+    return scripts.find((script) => script.name.toLowerCase() === "indopak")!.text
+  }
+
+  function getTranslation(translations: Verse["translations"]) {
+    return translations.find((t) => t.languageId.toLowerCase() === localeMap[locale])!.text
+  }
 
   return (
     <div>
@@ -224,12 +243,17 @@ export function QuranMoodExplorer() {
                     </div>
                     <div className="text-right">
                       <p className="font-arabic text-4xl leading-relaxed" dir="rtl">
-                        {verse.text}
+                        {verse.scripts.map((script) => (
+                          <span key={script.name} className="block">
+                            {script.text}
+                          </span>
+                        ))}
                       </p>
                     </div>
+
                     <div>
                       <p className="text-foreground/90 text-base leading-loose">
-                        {verse.translation}
+                        {getTranslation(verse.translations)}
                       </p>
                     </div>
                   </div>

@@ -1,4 +1,4 @@
-/* eslint-disable max-lines, react-func/max-lines-per-function */
+/* eslint-disable max-lines */
 
 import { env } from "@/env"
 import { joinUrl } from "@/lib/url"
@@ -282,12 +282,8 @@ export class QFSDK {
     }
 
     const url = Url.toString()
-    console.log("QF API URL:", url) // Debug: Show the final URL being called
 
-    if (verseCache.has(url)) {
-      console.log("QF CACHE HIT")
-      return verseCache.get(url)!
-    }
+    if (verseCache.has(url)) return verseCache.get(url)!
 
     const accessToken = await this.getAccessToken()
 
@@ -300,7 +296,6 @@ export class QFSDK {
       },
     })
 
-    console.log("QF API Response:", JSON.stringify(response.data, null, 2)) // Debug: Show the response
     verseCache.set(url, response.data)
 
     return response.data

@@ -4,20 +4,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 import { LRUCache } from "lru-cache"
 import { NextRequest } from "next/server"
 
-interface Verse {
-  number: number
-  text: string
-  translation: string
-  surah: {
-    number: number
-    name: string
-  }
-}
-
 const RATE_LIMIT_WINDOW = 30 * 1000
-
 const rateLimitCache = new LRUCache<string, number>({ max: 10000, ttl: RATE_LIMIT_WINDOW })
-const verseCache = new LRUCache<string, Verse>({ max: 10000 })
 
 const SYSTEM_PROMPT = `
 You are an Islamic scholar assistant. Your task is to suggest relevant Quranic verses based on a user's emotional state or mood.
@@ -56,61 +44,9 @@ Output Format:
 - Only the verse keys, inside <verse-keys> tags, nothing else.
 `
 
-interface Edition {
-  identifier: string
-  language: string
-  name: string
-  englishName: string
-  format: string
-  type: string
-  direction: string
-}
-
-interface Surah {
-  number: number
-  name: string
-  englishName: string
-  englishNameTranslation: string
-  numberOfAyahs: number
-  revelationType: string
-}
-
-interface AyahData {
-  number: number
-  text: string
-  edition: Edition
-  surah: Surah
-  numberInSurah: number
-  juz: number
-  manzil: number
-  page: number
-  ruku: number
-  hizbQuarter: number
-  sajda: boolean
-}
-
-interface ApiResponse {
-  code: number
-  status: string
-  data: AyahData[]
-}
-
 export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
   Query: {
     async getVersesByMood(_, { mood }, context) {
-      console.log(
-        JSON.stringify(
-          await quranSQK.getVerse("1:1", {
-            fields: { text_indopak: true, text_uthmani: true, chapter_id: true },
-            translations: "161,85",
-            translation_fields: {
-              language_id: true,
-              text: true,
-            },
-          })
-        )
-      )
-
       const clientIp = context.ip
       const now = Date.now()
 
@@ -181,32 +117,32 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
       if (verseKeys.length === 0) throw new Error("No verses found for this mood")
 
       const versePromises = verseKeys.map(async (key) => {
-        if (verseCache.has(key)) return verseCache.get(key)!
+        const verse = await quranSQK.getVerse(key, {
+          fields: { text_indopak: true, text_uthmani: true, chapter_id: true },
+          translations: "161,85",
+          translation_fields: {
+            language_name: true,
+            text: true,
+          },
+        })
 
-        const response = await fetch(
-          `https://api.alquran.cloud/v1/ayah/${key}/editions/quran-indopak,en.sahih`
-        )
+        return {
+          number: verse.verse.verse_number,
 
-        if (!response.ok) throw new Error("EXTERNAL API ERROR")
-        const data = (await response.json()) as ApiResponse
+          scripts: [
+            { name: "Indopak", text: verse.verse.text_indopak },
+            { name: "Uthmani", text: verse.verse.text_uthmani },
+          ],
 
-        if (!data.data || data.data.length < 2) return null
+          translations: verse.verse.translations!.map((t) => ({
+            languageId: t.language_name!,
+            text: t.text,
+          })),
 
-        const arabicVerse = data.data[0]
-        const languageVerse = data.data[1]
-
-        const result = {
-          number: arabicVerse.numberInSurah,
-          text: arabicVerse.text,
-          translation: languageVerse.text,
           surah: {
-            number: arabicVerse.surah.number,
-            name: arabicVerse.surah.englishName,
+            number: verse.verse.chapter_id,
           },
         }
-
-        verseCache.set(key, result)
-        return result
       })
 
       const verseResults = await Promise.allSettled(versePromises)

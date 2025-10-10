@@ -6,11 +6,18 @@ export const GET_VERSES_BY_MOOD = gql(`
       mood
       verses {
         number
-        text
-        translation
         surah {
           number
+        }
+        
+        scripts {
           name
+          text
+        }
+        
+        translations {
+          languageId
+          text
         }
       }
     }
