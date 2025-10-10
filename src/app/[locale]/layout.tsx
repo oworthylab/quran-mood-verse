@@ -7,14 +7,10 @@ import { hasLocale, NextIntlClientProvider } from "next-intl"
 import { setRequestLocale } from "next-intl/server"
 
 import { Provider } from "@/contexts"
-import { Amiri } from "next/font/google"
+import { Inter } from "next/font/google"
 import { notFound } from "next/navigation"
 
-const amiri = Amiri({
-  weight: ["400", "700"],
-  subsets: ["arabic"],
-  variable: "--font-amiri",
-})
+const inter = Inter({ subsets: ["latin"], variable: "--ff-inter" })
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_ORIGIN),
@@ -39,7 +35,10 @@ export default async function Layout({ children, params }: LayoutProps) {
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`from-background to-muted/20 min-h-screen bg-gradient-to-b font-sans antialiased ${amiri.variable}`}
+        className={[
+          "from-background to-muted/20 min-h-screen bg-gradient-to-b font-sans antialiased",
+          inter.variable,
+        ].join(" ")}
       >
         <NextIntlClientProvider locale={locale}>
           <Provider>{children}</Provider>

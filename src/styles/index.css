@@ -3,6 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --font-sans: var(--ff-inter), sans-serif;
+}
+
 @theme inline {
   --radius: 0.65rem;
 
