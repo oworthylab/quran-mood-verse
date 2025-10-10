@@ -94,7 +94,8 @@ export function QuranMoodExplorer() {
     setSubmitError(null)
 
     try {
-      const { data, errors } = await getVerses({ variables: { mood, locale } })
+      const { data, errors } = await getVerses({ variables: { mood, locale }, errorPolicy: "all" })
+      console.log({ data, errors })
       const error = errors ? errors[0]! : undefined
 
       if (error) {

@@ -72,6 +72,9 @@ importers:
       graphql-tools:
         specifier: ^9.0.20
         version: 9.0.20(@types/react@19.2.2)(graphql-ws@6.0.6(graphql@16.11.0)(ws@8.18.3))(graphql@16.11.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      lru-cache:
+        specifier: ^11.2.2
+        version: 11.2.2
       lucide-react:
         specifier: ^0.475.0
         version: 0.475.0(react@19.2.0)

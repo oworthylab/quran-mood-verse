@@ -1,6 +1,22 @@
 import { Resolvers } from "@/gql/artifacts/resolvers"
 import { GoogleGenerativeAI } from "@google/generative-ai"
+import { LRUCache } from "lru-cache"
 import { NextRequest } from "next/server"
+
+interface Verse {
+  number: number
+  text: string
+  translation: string
+  surah: {
+    number: number
+    name: string
+  }
+}
+
+const RATE_LIMIT_WINDOW = 30 * 1000
+
+const rateLimitCache = new LRUCache<string, number>({ max: 10000, ttl: RATE_LIMIT_WINDOW })
+const verseCache = new LRUCache<string, Verse>({ max: 10000 })
 
 const SYSTEM_PROMPT = `
 You are an Islamic scholar assistant. Your task is to suggest relevant Quranic verses based on a user's emotional state or mood.
@@ -80,8 +96,18 @@ interface ApiResponse {
 
 export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
   Query: {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async getVersesByMood(_, { mood, locale = "en" }) {
+    async getVersesByMood(_, { mood }, context) {
+      const clientIp = context.ip
+      const now = Date.now()
+
+      const lastRequestTime = rateLimitCache.get(clientIp)
+      if (lastRequestTime && now - lastRequestTime < RATE_LIMIT_WINDOW) {
+        const remainingTime = Math.ceil((RATE_LIMIT_WINDOW - (now - lastRequestTime)) / 1000)
+        throw new Error(
+          `Rate limit exceeded wait ${remainingTime} seconds before making another request.`
+        )
+      }
+
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
       const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash-lite" })
 
@@ -121,6 +147,7 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
           },
         })
         .catch(() => {
+          rateLimitCache.set(clientIp, now)
           throw new Error("Uses limit reached try again shortly")
         })
 
@@ -140,6 +167,8 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
       if (verseKeys.length === 0) throw new Error("No verses found for this mood")
 
       const versePromises = verseKeys.map(async (key) => {
+        if (verseCache.has(key)) return verseCache.get(key)!
+
         const response = await fetch(
           `https://api.alquran.cloud/v1/ayah/${key}/editions/quran-indopak,en.sahih`
         )
@@ -152,7 +181,7 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
         const arabicVerse = data.data[0]
         const languageVerse = data.data[1]
 
-        return {
+        const result = {
           number: arabicVerse.numberInSurah,
           text: arabicVerse.text,
           translation: languageVerse.text,
@@ -161,6 +190,9 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
             name: arabicVerse.surah.englishName,
           },
         }
+
+        verseCache.set(key, result)
+        return result
       })
 
       const verseResults = await Promise.allSettled(versePromises)
@@ -170,7 +202,10 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
 
       if (verses.length === 0) throw new Error("No verses could be fetched for this mood")
 
-      return { verses, mood: moodLabel }
+      const finalResult = { verses, mood: moodLabel.trim() }
+      rateLimitCache.set(clientIp, now)
+
+      return finalResult
     },
   },
 }
