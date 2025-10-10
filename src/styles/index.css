@@ -175,7 +175,16 @@
 @layer base {
   :root {
     --max-container-width: 56rem;
-    --container-x-gap: 2rem;
+    --container-x-gap: 1rem;
+
+    --footer-height: 7rem;
+  }
+
+  @media (min-width: 40rem) {
+    :root {
+      --container-x-gap: 2rem;
+      --footer-height: 4rem;
+    }
   }
 
   .smart-container {
