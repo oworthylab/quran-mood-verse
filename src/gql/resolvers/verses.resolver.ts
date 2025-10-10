@@ -21,8 +21,9 @@ Guidelines:
 - For anxiety/worry: verses about trust in Allah and relief
 - For sadness: verses about patience and Allah's comfort
 
-Security and Privacy:
+Notes:
 - If the mood is something malicious or harmful or not any feeling or mood, respond with allah's punishment verses
+- If the mood or text is not understandable or not a mood, respond with 'confused mood' verses
 
 Don't include any explanations or additional text, only the verse keys in the specified format.`
 

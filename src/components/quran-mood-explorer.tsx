@@ -102,6 +102,7 @@ export function QuranMoodExplorer() {
   }
 
   function handleChangeMood() {
+    console.log("Changing mood")
     setMood("")
     setSavedVerses([])
     localStorage.removeItem(LOCAL_STORAGE_QURAN_MOOD_VERSES_KEY)
@@ -112,7 +113,7 @@ export function QuranMoodExplorer() {
   return (
     <div>
       <LanguageSwitch />
-
+      {(verses.length <= 0).toString()} {verses.length}
       {verses.length <= 0 ? (
         <div className="flex min-h-screen flex-col items-center justify-center">
           <div className="mt-[-15%] text-center">
@@ -130,6 +131,7 @@ export function QuranMoodExplorer() {
                 <PromptInputTextarea
                   placeholder="How are you feeling today?"
                   className="placeholder:text-muted-foreground/60 text-foreground text-base"
+                  disabled={loading}
                 />
                 <PromptInputActions className="items-center justify-between">
                   <div className="text-muted-foreground ml-2 text-xs">{mood.length}/200</div>
@@ -139,6 +141,7 @@ export function QuranMoodExplorer() {
                       size="icon"
                       className="h-10 w-10 rounded-full shadow-md transition-all duration-200 hover:shadow-lg"
                       disabled={loading || !mood.trim()}
+                      onClick={() => void handleSubmit(mood)}
                     >
                       {loading ? (
                         <Loader2 className="h-5 w-5 animate-spin" />
