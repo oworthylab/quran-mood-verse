@@ -69,9 +69,9 @@ function getLocaleVerses() {
 
 const MOOD_PRESETS = [
   { label: "Grateful", emoji: "✨" },
+  { label: "Sad", emoji: "😔" },
   { label: "Seeking Forgiveness", emoji: "💫" },
   { label: "Anxious", emoji: "😰" },
-  { label: "Sad", emoji: "😔" },
   { label: "Angry", emoji: "😡" },
 ]
 
@@ -115,57 +115,59 @@ export function QuranMoodExplorer() {
 
       {verses.length <= 0 ? (
         <div className="flex min-h-screen flex-col items-center justify-center">
-          <div className="mb-6 inline-flex items-center gap-2 text-center text-2xl">
-            Discover comfort in verses that speak to you
-          </div>
+          <div className="mt-[-15%] text-center">
+            <div className="mb-6 inline-flex items-center gap-2 text-center text-2xl">
+              Discover comfort in verses that speak to you
+            </div>
 
-          <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-            <PromptInput
-              value={mood}
-              onValueChange={(value) => setMood(value.slice(0, 200))}
-              isLoading={loading}
-              onSubmit={() => void handleSubmit(mood)}
-            >
-              <PromptInputTextarea
-                placeholder="How are you feeling today?"
-                className="placeholder:text-muted-foreground/60 text-foreground text-base"
-              />
-              <PromptInputActions className="items-center justify-between">
-                <div className="text-muted-foreground ml-2 text-xs">{mood.length}/200</div>
-                <PromptInputAction tooltip={loading ? "Finding verses..." : "Find verses"}>
+            <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+              <PromptInput
+                value={mood}
+                onValueChange={(value) => setMood(value.slice(0, 200))}
+                isLoading={loading}
+                onSubmit={() => void handleSubmit(mood)}
+              >
+                <PromptInputTextarea
+                  placeholder="How are you feeling today?"
+                  className="placeholder:text-muted-foreground/60 text-foreground text-base"
+                />
+                <PromptInputActions className="items-center justify-between">
+                  <div className="text-muted-foreground ml-2 text-xs">{mood.length}/200</div>
+                  <PromptInputAction tooltip={loading ? "Finding verses..." : "Find verses"}>
+                    <Button
+                      variant="default"
+                      size="icon"
+                      className="h-10 w-10 rounded-full shadow-md transition-all duration-200 hover:shadow-lg"
+                      disabled={loading || !mood.trim()}
+                    >
+                      {loading ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <ArrowUp className="h-5 w-5" />
+                      )}
+                    </Button>
+                  </PromptInputAction>
+                </PromptInputActions>
+              </PromptInput>
+
+              <div className="flex flex-wrap justify-center gap-2">
+                {MOOD_PRESETS.map((preset) => (
                   <Button
-                    variant="default"
-                    size="icon"
-                    className="h-10 w-10 rounded-full shadow-md transition-all duration-200 hover:shadow-lg"
-                    disabled={loading || !mood.trim()}
+                    key={preset.label}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setMood(preset.label)
+                      void handleSubmit(preset.label)
+                    }}
+                    disabled={loading}
+                    className="border-muted-foreground/20 hover:border-primary hover:bg-primary/5 hover:text-primary gap-2 rounded-full px-4 py-2 transition-all duration-200"
                   >
-                    {loading ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                    ) : (
-                      <ArrowUp className="h-5 w-5" />
-                    )}
+                    <span className="text-base">{preset.emoji}</span>
+                    <span className="font-medium">{preset.label}</span>
                   </Button>
-                </PromptInputAction>
-              </PromptInputActions>
-            </PromptInput>
-
-            <div className="flex flex-wrap justify-center gap-3">
-              {MOOD_PRESETS.map((preset) => (
-                <Button
-                  key={preset.label}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setMood(preset.label)
-                    void handleSubmit(preset.label)
-                  }}
-                  disabled={loading}
-                  className="border-muted-foreground/20 hover:border-primary hover:bg-primary/5 hover:text-primary gap-2 rounded-full px-4 py-2 transition-all duration-200"
-                >
-                  <span className="text-base">{preset.emoji}</span>
-                  <span className="font-medium">{preset.label}</span>
-                </Button>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
