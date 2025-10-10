@@ -258,7 +258,7 @@ export function QuranMoodExplorer() {
                     </div>
 
                     <div>
-                      <p className="text-foreground/90 text-base leading-loose">
+                      <p className="text-foreground/90 text-lg leading-loose">
                         {getTranslation(verse.translations)}
                       </p>
                     </div>

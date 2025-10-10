@@ -12,9 +12,15 @@ import LocaleFont from "next/font/local"
 import { notFound } from "next/navigation"
 
 const inter = Inter({ subsets: ["latin"], variable: "--ff-inter" })
+
 const nastaleeq = LocaleFont({
   variable: "--ff-indopak-nastaleeq",
   src: "../../../public/fonts/indopak-nastaleeq.ttf",
+})
+
+const kfgqpcNaskh = LocaleFont({
+  variable: "--ff-kfgqpc-taha-naskh",
+  src: "../../../public/fonts/kfgqpc-taha-naskh.ttf",
 })
 
 export const metadata: Metadata = {
@@ -44,6 +50,7 @@ export default async function Layout({ children, params }: LayoutProps) {
           "from-background to-muted/20 min-h-screen bg-gradient-to-b font-sans antialiased",
           inter.variable,
           nastaleeq.variable,
+          kfgqpcNaskh.variable,
         ].join(" ")}
       >
         <NextIntlClientProvider locale={locale}>
