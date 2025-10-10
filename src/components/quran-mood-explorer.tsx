@@ -3,6 +3,7 @@
 /* eslint-disable max-lines */
 
 import { LanguageSwitch } from "@/components/shared/language-switch"
+import { ScriptSwitch } from "@/components/shared/script-switch"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import {
@@ -12,6 +13,8 @@ import {
   PromptInputTextarea,
 } from "@/components/ui/prompt-input"
 import { GET_VERSES_BY_MOOD } from "@/gql/queries/verses.query"
+import { cn } from "@/lib/utils"
+import { useScriptStore } from "@/stores/script-store"
 import { useLazyQuery } from "@apollo/client"
 import { ArrowUp, Loader2, Sparkles, SquareArrowOutUpRight } from "lucide-react"
 import { useLocale } from "next-intl"
@@ -90,6 +93,7 @@ const initialState = getLocaleVerses()
 
 export function QuranMoodExplorer() {
   const locale = useLocale()
+  const { script } = useScriptStore()
 
   const [mood, setMood] = useState("")
   const [currentMood, setCurrentMood] = useState(initialState?.mood ?? "")
@@ -132,9 +136,8 @@ export function QuranMoodExplorer() {
 
   const verses = savedVerses.length > 0 ? savedVerses : []
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function getScript(scripts: Verse["scripts"]) {
-    return scripts.find((script) => script.name.toLowerCase() === "indopak")!.text
+    return scripts.find((option) => option.name.toLowerCase() === script)!.text
   }
 
   function getTranslation(translations: Verse["translations"]) {
@@ -144,6 +147,7 @@ export function QuranMoodExplorer() {
   return (
     <div>
       <LanguageSwitch />
+      <ScriptSwitch />
 
       {verses.length <= 0 ? (
         <div className="flex min-h-screen flex-col items-center justify-center">
@@ -242,12 +246,14 @@ export function QuranMoodExplorer() {
                       </a>
                     </div>
                     <div className="text-right">
-                      <p className="font-arabic text-4xl leading-relaxed" dir="rtl">
-                        {verse.scripts.map((script) => (
-                          <span key={script.name} className="block">
-                            {script.text}
-                          </span>
-                        ))}
+                      <p
+                        dir="rtl"
+                        className={cn("font-arabic text-4xl leading-relaxed", {
+                          "font-arabic-indopak": script === "indopak",
+                          "font-arabic-uthmani": script === "uthmani",
+                        })}
+                      >
+                        {getScript(verse.scripts)}
                       </p>
                     </div>
 
