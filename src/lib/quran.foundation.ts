@@ -64,6 +64,7 @@ export type TranslationField =
   | "language_name"
   | "language_id"
   | "id"
+  | "text"
 
 export interface GetVerseOptions {
   language?: string
@@ -227,6 +228,23 @@ export class QFSDK {
     return this.accessToken
   }
 
+  public async getTranslationResources() {
+    const accessToken = await this.getAccessToken()
+
+    const response = await axios<QuranFoundation.GetVerseByKeyResponse>({
+      method: "get",
+      url: joinUrl(API_URL, "resources/translations"),
+      headers: {
+        "x-auth-token": accessToken,
+        "x-client-id": this.clientId,
+      },
+    })
+
+    console.log("QF API Response:", JSON.stringify(response.data, null, 2)) // Debug: Show the response
+
+    return response.data
+  }
+
   public joinQueryParams(value: string[] | Record<string, boolean>): string {
     if (Array.isArray(value)) {
       return value.join(",")
@@ -264,8 +282,12 @@ export class QFSDK {
     }
 
     const url = Url.toString()
-    if (verseCache.has(url)) console.log("QF CACHE HIT")
-    if (verseCache.has(url)) return verseCache.get(url)!
+    console.log("QF API URL:", url) // Debug: Show the final URL being called
+
+    if (verseCache.has(url)) {
+      console.log("QF CACHE HIT")
+      return verseCache.get(url)!
+    }
 
     const accessToken = await this.getAccessToken()
 
@@ -278,6 +300,7 @@ export class QFSDK {
       },
     })
 
+    console.log("QF API Response:", JSON.stringify(response.data, null, 2)) // Debug: Show the response
     verseCache.set(url, response.data)
 
     return response.data
@@ -285,6 +308,6 @@ export class QFSDK {
 }
 
 export const quranSQK = QFSDK.getInstance({
-  clientId: process.env.QURAN_FOUNDATION_CLIENT_ID!,
-  clientSecret: process.env.QURAN_FOUNDATION_CLIENT_SECRET!,
+  clientId: env.QURAN_FOUNDATION_CLIENT_ID!,
+  clientSecret: env.QURAN_FOUNDATION_CLIENT_SECRET!,
 })

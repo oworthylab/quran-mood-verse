@@ -101,7 +101,12 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
       console.log(
         JSON.stringify(
           await quranSQK.getVerse("1:1", {
-            fields: { text_indopak: true, text_uthmani: true, text_imlaei: true },
+            fields: { text_indopak: true, text_uthmani: true, chapter_id: true },
+            translations: "161,85",
+            translation_fields: {
+              language_id: true,
+              text: true,
+            },
           })
         )
       )
