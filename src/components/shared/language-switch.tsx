@@ -3,10 +3,7 @@
 import { Link, usePathname } from "@/i18n/navigation"
 import { Locale, useLocale } from "next-intl"
 
-const languages = [
-  { code: "en" as Locale, name: "English", flag: "🇺🇸" },
-  { code: "bn" as Locale, name: "বাংলা", flag: "🇧🇩" },
-]
+const languages = [{ code: "en" as Locale, name: "English", flag: "🇺🇸" }]
 
 export function LanguageSwitch() {
   const pathname = usePathname()
