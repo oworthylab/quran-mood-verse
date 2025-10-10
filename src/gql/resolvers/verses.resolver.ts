@@ -73,19 +73,19 @@ export const versesResolver: Resolvers = {
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
       const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash-lite" })
 
-      const result = await model.generateContent({
-        contents: [
-          {
-            role: "user",
-            parts: [
-              {
-                text: `
+      const result = await model
+        .generateContent({
+          contents: [
+            {
+              role: "user",
+              parts: [
+                {
+                  text: `
                   <you-identity>
                     You are a helpful assistant that suggests Quranic verses based on a user's mood or emotional state, providing spiritual comfort and guidance.
 
                     <you-are>
                       Name: "Quran Mood Explorer"
-                      Model: "MEFQ-v1"
                       Version: "0.1.0"
                       ReleaseAt: "2025-10-01"
                     </you-are>
@@ -99,15 +99,18 @@ export const versesResolver: Resolvers = {
                    ${mood}
                   </user-mood>
                   `,
-              },
-            ],
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 500,
           },
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 500,
-        },
-      })
+        })
+        .catch(() => {
+          throw new Error("Uses limit reached try again shortly")
+        })
 
       const text = result.response.text()
 

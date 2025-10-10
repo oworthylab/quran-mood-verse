@@ -83,19 +83,33 @@ export function QuranMoodExplorer() {
   const [mood, setMood] = useState("")
   const [currentMood, setCurrentMood] = useState(initialState?.mood ?? "")
   const [savedVerses, setSavedVerses] = useState<Array<Verse>>(initialState?.verses ?? [])
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
-  const [getVerses, { loading, error }] = useLazyQuery(GET_VERSES_BY_MOOD, {})
+  const [getVerses, { loading }] = useLazyQuery(GET_VERSES_BY_MOOD)
 
   async function handleSubmit(moodInput: string) {
     const mood = moodInput.trim()
     if (!mood) return
-    setCurrentMood(mood)
 
-    const { data } = await getVerses({ variables: { mood, locale } })
+    setSubmitError(null)
 
-    if (data?.getVersesByMood?.verses && data.getVersesByMood.verses.length > 0) {
-      setLocaleVerses(data.getVersesByMood.verses, mood)
-      setSavedVerses(data.getVersesByMood.verses)
+    try {
+      const { data, errors } = await getVerses({ variables: { mood, locale } })
+      const error = errors ? errors[0]! : undefined
+
+      if (error) {
+        return setSubmitError(error.message || "Something went wrong while fetching verses")
+      }
+
+      if (data?.getVersesByMood?.verses && data.getVersesByMood.verses.length > 0) {
+        setCurrentMood(mood)
+        setLocaleVerses(data.getVersesByMood.verses, mood)
+        setSavedVerses(data.getVersesByMood.verses)
+      } else {
+        setSubmitError("No verses found for your mood.")
+      }
+    } catch (_err) {
+      setSubmitError("Something went wrong while fetching verses.")
     }
   }
 
@@ -121,7 +135,10 @@ export function QuranMoodExplorer() {
             <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
               <PromptInput
                 value={mood}
-                onValueChange={(value) => setMood(value.slice(0, 200))}
+                onValueChange={(value) => {
+                  setMood(value.slice(0, 200))
+                  if (submitError) setSubmitError(null)
+                }}
                 isLoading={loading}
                 onSubmit={() => void handleSubmit(mood)}
               >
@@ -149,6 +166,12 @@ export function QuranMoodExplorer() {
                   </PromptInputAction>
                 </PromptInputActions>
               </PromptInput>
+
+              {submitError && (
+                <Card className="bg-destructive/10 border-destructive/20 p-4">
+                  <p className="text-destructive text-sm">{submitError}</p>
+                </Card>
+              )}
 
               <div className="flex flex-wrap justify-center gap-2">
                 {MOOD_PRESETS.map((preset) => (
@@ -181,14 +204,6 @@ export function QuranMoodExplorer() {
               </p>
             )}
           </div>
-
-          {error && (
-            <Card className="bg-destructive/10 border-destructive/20 p-4">
-              <p className="text-destructive text-sm">
-                {error.message || "Something went wrong while fetching verses"}
-              </p>
-            </Card>
-          )}
 
           <div className="flex flex-col gap-8">
             {verses.map((verse, index) => (
