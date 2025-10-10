@@ -77,8 +77,6 @@ const MOOD_PRESETS = [
 
 const initialState = getLocaleVerses()
 
-console.log(initialState)
-
 export function QuranMoodExplorer() {
   const locale = useLocale()
 
@@ -86,7 +84,7 @@ export function QuranMoodExplorer() {
   const [currentMood, setCurrentMood] = useState(initialState?.mood ?? "")
   const [savedVerses, setSavedVerses] = useState<Array<Verse>>(initialState?.verses ?? [])
 
-  const [getVerses, { loading, error, data }] = useLazyQuery(GET_VERSES_BY_MOOD, {})
+  const [getVerses, { loading, error }] = useLazyQuery(GET_VERSES_BY_MOOD, {})
 
   async function handleSubmit(moodInput: string) {
     const mood = moodInput.trim()
@@ -102,18 +100,17 @@ export function QuranMoodExplorer() {
   }
 
   function handleChangeMood() {
-    console.log("Changing mood")
     setMood("")
     setSavedVerses([])
     localStorage.removeItem(LOCAL_STORAGE_QURAN_MOOD_VERSES_KEY)
   }
 
-  const verses = savedVerses.length > 0 ? savedVerses : data?.getVersesByMood?.verses || []
+  const verses = savedVerses.length > 0 ? savedVerses : []
 
   return (
     <div>
       <LanguageSwitch />
-      {(verses.length <= 0).toString()} {verses.length}
+
       {verses.length <= 0 ? (
         <div className="flex min-h-screen flex-col items-center justify-center">
           <div className="mt-[-15%] text-center">
