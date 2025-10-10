@@ -1,4 +1,5 @@
 import { Resolvers } from "@/gql/artifacts/resolvers"
+import { quranSQK } from "@/lib/quran.foundation"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { LRUCache } from "lru-cache"
 import { NextRequest } from "next/server"
@@ -97,6 +98,14 @@ interface ApiResponse {
 export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
   Query: {
     async getVersesByMood(_, { mood }, context) {
+      console.log(
+        JSON.stringify(
+          await quranSQK.getVerse("1:1", {
+            fields: { text_indopak: true, text_uthmani: true, text_imlaei: true },
+          })
+        )
+      )
+
       const clientIp = context.ip
       const now = Date.now()
 
