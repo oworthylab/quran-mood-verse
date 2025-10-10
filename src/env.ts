@@ -8,7 +8,9 @@ export const clientEnvSchema = z.object({
   GEMINI_API_KEY: isServer ? z.string() : z.string().optional(),
   QURAN_FOUNDATION_CLIENT_ID: isServer ? z.string() : z.string().optional(),
   QURAN_FOUNDATION_CLIENT_SECRET: isServer ? z.string() : z.string().optional(),
-  QURAN_FOUNDATION_END_POINT: isServer ? z.string().url() : z.string().url().optional(),
+
+  QURAN_FOUNDATION_OAUTH_URL: isServer ? z.string().url() : z.string().url().optional(),
+  QURAN_FOUNDATION_API_URL: isServer ? z.string().url() : z.string().url().optional(),
 
   NODE_ENV: z.enum(["development", "staged", "production"]).default("development"),
 })
