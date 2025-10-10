@@ -75,12 +75,16 @@ const MOOD_PRESETS = [
   { label: "Angry", emoji: "😡" },
 ]
 
+const initialState = getLocaleVerses()
+
+console.log(initialState)
+
 export function QuranMoodExplorer() {
   const locale = useLocale()
 
   const [mood, setMood] = useState("")
-  const [currentMood, setCurrentMood] = useState("")
-  const [savedVerses, setSavedVerses] = useState<Array<Verse>>(getLocaleVerses()?.verses ?? [])
+  const [currentMood, setCurrentMood] = useState(initialState?.mood ?? "")
+  const [savedVerses, setSavedVerses] = useState<Array<Verse>>(initialState?.verses ?? [])
 
   const [getVerses, { loading, error, data }] = useLazyQuery(GET_VERSES_BY_MOOD, {})
 
