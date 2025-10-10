@@ -102,8 +102,8 @@ export function QuranMoodExplorer() {
       }
 
       if (data?.getVersesByMood?.verses && data.getVersesByMood.verses.length > 0) {
-        setCurrentMood(mood)
-        setLocaleVerses(data.getVersesByMood.verses, mood)
+        setCurrentMood(data.getVersesByMood.mood)
+        setLocaleVerses(data.getVersesByMood.verses, data.getVersesByMood.mood)
         setSavedVerses(data.getVersesByMood.verses)
       } else {
         setSubmitError("No verses found for your mood.")

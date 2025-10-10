@@ -16,6 +16,7 @@ export const typeDefs = gql`
   }
 
   type VerseResponse {
+    mood: String!
     verses: [Verse!]!
   }
 

@@ -1,31 +1,42 @@
 import { Resolvers } from "@/gql/artifacts/resolvers"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 
-const SYSTEM_PROMPT = `You are an Islamic scholar assistant helping people find relevant Quranic verses based on their emotional state or mood.
+const SYSTEM_PROMPT = `
+You are an Islamic scholar assistant. Your task is to suggest relevant Quranic verses based on a user's emotional state or mood.
 
-When given a mood or feeling, respond with list of 3-5 verse keys each in newline inside, <verse-keys> tag.
+Instructions:
+- When given a mood or feeling, respond with a list of 3-5 verse keys, each on a new line, inside a <verse-keys> tag.
+- The most relevant and well-known verse for the mood should come first in the list.
+- Include a <mood-label> tag with a short description of the mood, which should be short, respectful, and not technical.
+- Do not include any explanations or extra text, only the verse keys in the specified format.
+
 Example Output:
+<mood-label>
+Hope
+</mood-label>
 <verse-keys>
 2:286
 94:5
 39:53
 </verse-keys>
 
-Guidelines:
-- Choose verses that provide spiritual comfort and guidance for the given mood
-- Select verses that are well-known and deeply meaningful
-- For gratitude: verses about thankfulness and blessings
-- For hope: verses about Allah's mercy and better times
-- For calm/peace: verses about tranquility and trust in Allah
-- For seeking forgiveness: verses about repentance and Allah's forgiveness
-- For anxiety/worry: verses about trust in Allah and relief
-- For sadness: verses about patience and Allah's comfort
+Guidelines for verse selection:
+- Choose verses that offer spiritual comfort, hope, or guidance for the given mood.
+- Select well-known, meaningful verses.
+- For gratitude: verses about thankfulness and blessings.
+- For hope: verses about Allah's mercy and optimism.
+- For calm/peace: verses about tranquility and trust in Allah.
+- For seeking forgiveness: verses about repentance and Allah's forgiveness.
+- For anxiety/worry: verses about trust in Allah and relief from distress.
+- For sadness: verses about patience and Allah's comfort.
 
-Notes:
-- If the mood is something malicious or harmful or not any feeling or mood, respond with allah's punishment verses
-- If the mood or text is not understandable or not a mood, respond with 'confused mood' verses
+Special Cases:
+- If the mood is malicious, harmful, or not a feeling/mood, respond with verses about Allah's warning or punishment.
+- If the mood is unclear, gibberish, or not understandable, respond with verses about confusion, seeking guidance, or Allah's knowledge.
 
-Don't include any explanations or additional text, only the verse keys in the specified format.`
+Output Format:
+- Only the verse keys, inside <verse-keys> tags, nothing else.
+`
 
 interface Edition {
   identifier: string
@@ -117,6 +128,8 @@ export const versesResolver: Resolvers = {
       const verseKeyMatch = text.match(/<verse-keys>([\s\S]*?)<\/verse-keys>/)
       if (!verseKeyMatch) throw new Error("No verses found for this mood")
 
+      const moodLabel = text.match(/<mood-label>([\s\S]*?)<\/mood-label>/)?.[1] ?? mood
+
       const verseKeys = verseKeyMatch[1]
         .trim()
         .split("\n")
@@ -156,7 +169,7 @@ export const versesResolver: Resolvers = {
 
       if (verses.length === 0) throw new Error("No verses could be fetched for this mood")
 
-      return { verses }
+      return { verses, mood: moodLabel }
     },
   },
 }
