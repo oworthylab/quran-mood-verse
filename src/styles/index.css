@@ -173,6 +173,42 @@
 }
 
 @layer base {
+  ::-webkit-scrollbar {
+    width: 0.3rem;
+    height: 0px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  body::-webkit-scrollbar-thumb,
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/20 min-h-11 rounded-full;
+  }
+
+  body::-webkit-scrollbar-thumb {
+    @apply bg-primary/40;
+  }
+
+  body::-webkit-scrollbar-thumb:hover,
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/90;
+  }
+
+  body::-webkit-scrollbar {
+    width: 0.35rem;
+  }
+
+  @-moz-document url-prefix() {
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) color-mix(in oklab, var(--primary) 0%, transparent);
+    }
+  }
+}
+
+@layer base {
   :root {
     --max-container-width: 56rem;
     --container-x-gap: 1rem;
