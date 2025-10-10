@@ -2,8 +2,6 @@
 
 /* eslint-disable max-lines */
 
-import { LanguageSwitch } from "@/components/shared/language-switch"
-import { ScriptSwitch } from "@/components/shared/script-switch"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import {
@@ -146,12 +144,9 @@ export function QuranMoodExplorer() {
 
   return (
     <div>
-      <LanguageSwitch />
-      <ScriptSwitch />
-
       {verses.length <= 0 ? (
-        <div className="flex min-h-screen flex-col items-center justify-center">
-          <div className="mt-[-15%] text-center">
+        <div className="flex min-h-[calc(100vh-200px)] flex-col items-center justify-center">
+          <div className="text-center">
             <div className="mb-6 inline-flex items-center gap-2 text-center text-2xl">
               Discover comfort in verses that speak to you
             </div>

@@ -6,6 +6,7 @@ import { Metadata } from "next"
 import { hasLocale, NextIntlClientProvider } from "next-intl"
 import { setRequestLocale } from "next-intl/server"
 
+import { Footer } from "@/components/shared/footer"
 import { Provider } from "@/contexts"
 import { Inter } from "next/font/google"
 import LocaleFont from "next/font/local"
@@ -47,14 +48,17 @@ export default async function Layout({ children, params }: LayoutProps) {
     <html lang={locale} suppressHydrationWarning>
       <body
         className={[
-          "from-background to-muted/20 min-h-screen bg-gradient-to-b font-sans antialiased",
+          "from-background to-muted/20 flex min-h-screen flex-col bg-gradient-to-b font-sans antialiased",
           inter.variable,
           nastaleeq.variable,
           kfgqpcNaskh.variable,
         ].join(" ")}
       >
         <NextIntlClientProvider locale={locale}>
-          <Provider>{children}</Provider>
+          <Provider>
+            <div className="flex-1">{children}</div>
+            <Footer />
+          </Provider>
         </NextIntlClientProvider>
       </body>
     </html>

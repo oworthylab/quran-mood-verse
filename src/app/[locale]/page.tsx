@@ -11,7 +11,7 @@ export default async function Index({ params }: { params: Promise<{ locale: Loca
   setRequestLocale(locale)
 
   return (
-    <main className="smart-container min-h-screen">
+    <main className="smart-container">
       <QuranMoodExplorer />
     </main>
   )
