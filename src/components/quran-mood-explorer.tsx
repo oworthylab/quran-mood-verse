@@ -1,5 +1,7 @@
 "use client"
 
+/* eslint-disable max-lines */
+
 import { LanguageSwitch } from "@/components/shared/language-switch"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -169,7 +171,7 @@ export function QuranMoodExplorer() {
         </div>
       ) : (
         <div className="my-8 flex flex-col gap-8">
-          <div className="flex flex-col gap-2 text-center">
+          <div className="flex flex-col gap-1 text-center">
             <h2 className="text-2xl font-semibold">Verses for your soul</h2>
             {currentMood && (
               <p className="text-muted-foreground">
@@ -186,31 +188,33 @@ export function QuranMoodExplorer() {
             </Card>
           )}
 
-          <div className="flex flex-col gap-6">
-            {verses.map((verse) => (
-              <Card
-                key={`${verse.surah.number}-${verse.number}`}
-                className="p-6 shadow-md transition-shadow hover:shadow-lg"
-              >
-                <div className="flex flex-col gap-4">
-                  <div className="text-muted-foreground flex items-center justify-between text-sm">
-                    <span className="font-medium">({verse.surah.name})</span>
-                    <span>
-                      Surah {verse.surah.number}, Verse {verse.number}
-                    </span>
+          <div className="flex flex-col gap-8">
+            {verses.map((verse, index) => (
+              <div key={`${verse.surah.number}-${verse.number}`} className="relative">
+                <div className="flex flex-col gap-6">
+                  <div className="flex justify-end">
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://quran.com/${verse.surah.number}/${verse.number}`}
+                      className="bg-primary/80 text-primary-foreground inline-flex items-center rounded-full px-3 py-1 text-sm font-medium"
+                    >
+                      {verse.surah.number}:{verse.number}
+                    </a>
                   </div>
                   <div className="text-right">
-                    <p className="font-arabic text-3xl" dir="rtl">
+                    <p className="font-arabic text-3xl leading-relaxed" dir="rtl">
                       {verse.text}
                     </p>
                   </div>
-                  <div className="border-t pt-4">
+                  <div>
                     <p className="text-foreground/90 text-base leading-relaxed">
                       {verse.translation}
                     </p>
                   </div>
                 </div>
-              </Card>
+                {index < verses.length - 1 && <div className="border-muted/20 mt-8 border-b" />}
+              </div>
             ))}
           </div>
 

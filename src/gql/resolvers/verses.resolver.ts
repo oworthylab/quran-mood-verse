@@ -135,7 +135,7 @@ export const versesResolver: Resolvers = {
         const languageVerse = data.data[1]
 
         return {
-          number: arabicVerse.number,
+          number: arabicVerse.numberInSurah,
           text: arabicVerse.text,
           translation: languageVerse.text,
           surah: {
