@@ -13,9 +13,9 @@ import {
 } from "@/components/ui/prompt-input"
 import { GET_VERSES_BY_MOOD } from "@/gql/queries/verses.query"
 import { useLazyQuery } from "@apollo/client"
-import { ArrowUp, Loader2, Sparkles } from "lucide-react"
+import { ArrowUp, Loader2, Sparkles, SquareArrowOutUpRight } from "lucide-react"
 import { useLocale } from "next-intl"
-import { useState } from "react"
+import { Fragment, useState } from "react"
 import z from "zod"
 
 const verseSchema = z.object({
@@ -190,35 +190,38 @@ export function QuranMoodExplorer() {
 
           <div className="flex flex-col gap-8">
             {verses.map((verse, index) => (
-              <div key={`${verse.surah.number}-${verse.number}`} className="relative">
-                <div className="flex flex-col gap-6">
-                  <div className="flex justify-end">
-                    <a
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href={`https://quran.com/${verse.surah.number}/${verse.number}`}
-                      className="bg-primary/80 text-primary-foreground inline-flex items-center rounded-full px-3 py-1 text-sm font-medium"
-                    >
-                      {verse.surah.number}:{verse.number}
-                    </a>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-arabic text-3xl leading-relaxed" dir="rtl">
-                      {verse.text}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-foreground/90 text-base leading-relaxed">
-                      {verse.translation}
-                    </p>
+              <Fragment key={`${verse.surah.number}-${verse.number}`}>
+                <div key={`${verse.surah.number}-${verse.number}`} className="relative">
+                  <div className="flex flex-col gap-8">
+                    <div className="flex justify-end">
+                      <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={`https://quran.com/${verse.surah.number}?startingVerse=${verse.number}`}
+                        className="bg-primary/80 text-primary-foreground inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium"
+                      >
+                        {verse.surah.number}:{verse.number}{" "}
+                        <SquareArrowOutUpRight className="size-3.5" />
+                      </a>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-arabic text-4xl leading-relaxed" dir="rtl">
+                        {verse.text}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-foreground/90 text-base leading-loose">
+                        {verse.translation}
+                      </p>
+                    </div>
                   </div>
                 </div>
-                {index < verses.length - 1 && <div className="border-muted/20 mt-8 border-b" />}
-              </div>
+                {index < verses.length - 1 && <div className="border-muted/20 border-b" />}
+              </Fragment>
             ))}
           </div>
 
-          <div className="text-center">
+          <div className="my-4 text-center">
             <Button
               onClick={handleChangeMood}
               variant="outline"
