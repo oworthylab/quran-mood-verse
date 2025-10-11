@@ -15,24 +15,25 @@ import { useMoodStore, type Verse } from "@/stores/mood-store"
 import { useScriptStore } from "@/stores/script-store"
 import { useLazyQuery } from "@apollo/client"
 import { ArrowUp, Loader2, Sparkles, SquareArrowOutUpRight } from "lucide-react"
-import { useLocale } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { Fragment } from "react"
 
 const localeMap = { en: "english", bn: "bengali" }
 
-const MOOD_PRESETS = [
-  { label: "Grateful", emoji: "✨" },
-  { label: "Sad", emoji: "😔" },
-  { label: "Seeking Forgiveness", emoji: "💫" },
-  { label: "Anxious", emoji: "😰" },
-  { label: "Angry", emoji: "😡" },
-]
-
 export function QuranMoodExplorer() {
   const locale = useLocale()
+  const t = useTranslations()
 
   const store = useMoodStore()
   const { script } = useScriptStore()
+
+  const MOOD_PRESETS = [
+    { label: t("moods.grateful"), key: "Grateful", emoji: "✨" },
+    { label: t("moods.sad"), key: "Sad", emoji: "😔" },
+    { label: t("moods.seekingForgiveness"), key: "Seeking Forgiveness", emoji: "💫" },
+    { label: t("moods.anxious"), key: "Anxious", emoji: "😰" },
+    { label: t("moods.angry"), key: "Angry", emoji: "😡" },
+  ]
 
   const [getVerses, { loading }] = useLazyQuery(GET_VERSES_BY_MOOD, {
     errorPolicy: "all",
@@ -49,16 +50,16 @@ export function QuranMoodExplorer() {
       const error = errors ? errors[0]! : undefined
 
       if (error) {
-        return store.setSubmitError(error.message || "Something went wrong while fetching verses")
+        return store.setSubmitError(error.message || t("errors.fetchingVerses"))
       }
 
       if (data?.getVersesByMood?.verses && data.getVersesByMood.verses.length > 0) {
         store.updateVersesResult(data.getVersesByMood.verses, data.getVersesByMood.mood)
       } else {
-        store.setSubmitError("No verses found for your mood.")
+        store.setSubmitError(t("errors.noVersesFound"))
       }
     } catch (_err) {
-      store.setSubmitError("Something went wrong while fetching verses.")
+      store.setSubmitError(t("errors.generalError"))
     }
   }
 
@@ -82,7 +83,7 @@ export function QuranMoodExplorer() {
         <div className="flex min-h-[calc(var(--fs)-var(--footer-height))] flex-col items-center justify-center">
           <div className="text-center">
             <div className="mb-6 inline-flex items-center gap-2 text-center text-2xl">
-              Discover comfort in verses that speak to you
+              {t("home.tagline")}
             </div>
 
             <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
@@ -97,15 +98,17 @@ export function QuranMoodExplorer() {
                   onSubmit={() => void handleSubmit(store.mood)}
                 >
                   <PromptInputTextarea
-                    placeholder="How are you feeling today?"
+                    placeholder={t("home.moodPrompt")}
                     className="placeholder:text-muted-foreground text-foreground text-base"
                     disabled={loading}
                   />
                   <PromptInputActions className="items-center justify-between">
                     <div className="text-muted-foreground ml-2 text-xs">
-                      {store.mood.length}/200
+                      {store.mood.trim().length}/200
                     </div>
-                    <PromptInputAction tooltip={loading ? "Finding verses..." : "Find verses"}>
+                    <PromptInputAction
+                      tooltip={loading ? t("home.findingVerses") : t("home.findVerses")}
+                    >
                       <Button
                         variant="default"
                         size="icon"
@@ -137,8 +140,8 @@ export function QuranMoodExplorer() {
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      store.setMood(preset.label)
-                      void handleSubmit(preset.label)
+                      store.setMood(preset.key)
+                      void handleSubmit(preset.key)
                     }}
                     disabled={loading}
                     className="border-muted-foreground/20 hover:border-primary hover:bg-primary/5 hover:text-primary gap-2 rounded-full px-4 py-2 transition-all duration-200"
@@ -154,10 +157,10 @@ export function QuranMoodExplorer() {
       ) : (
         <div className="my-8 flex flex-col gap-8">
           <div className="flex flex-col gap-1 text-center">
-            <h2 className="text-2xl font-semibold">Verses for your soul</h2>
+            <h2 className="text-2xl font-semibold">{t("home.versesForSoul")}</h2>
             {store.currentMood && (
               <p className="text-muted-foreground">
-                Based on your mood: <span className="font-medium">{store.currentMood}</span>
+                {t("home.basedOnMood", { mood: store.currentMood })}
               </p>
             )}
           </div>
@@ -174,7 +177,7 @@ export function QuranMoodExplorer() {
                         href={`https://quran.com/${verse.surah.number}?startingVerse=${verse.number}`}
                         className="bg-primary/80 text-primary-foreground inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium"
                       >
-                        {verse.surah.number}:{verse.number}{" "}
+                        {verse.surah.number}:{verse.number}
                         <SquareArrowOutUpRight className="size-3.5" />
                       </a>
                     </div>
@@ -208,7 +211,7 @@ export function QuranMoodExplorer() {
               className="border-primary/20 hover:border-primary hover:bg-primary/5 hover:text-primary gap-2 px-6 py-3 transition-all duration-200"
             >
               <Sparkles className="h-4 w-4" />
-              Mood changed?
+              {t("home.moodChanged")}
             </Button>
           </div>
         </div>

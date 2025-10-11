@@ -1,3 +1,39 @@
 {
-  "title": "Hello World"
+  "app": {
+    "title": "Find your verses",
+    "description": "Discover verse based on you mood, situation or topic."
+  },
+  "home": {
+    "tagline": "Discover comfort in verses that speak to you",
+    "moodPrompt": "How are you feeling today?",
+    "findingVerses": "Finding verses...",
+    "findVerses": "Find verses",
+    "moodChanged": "Mood changed?",
+    "versesForSoul": "Verses for your soul",
+    "basedOnMood": "Based on your mood: {mood}"
+  },
+  "footer": {
+    "tagline": "Find verses that speak to your soul"
+  },
+  "moods": {
+    "grateful": "Grateful",
+    "sad": "Sad",
+    "seekingForgiveness": "Seeking Forgiveness",
+    "anxious": "Anxious",
+    "angry": "Angry"
+  },
+  "errors": {
+    "fetchingVerses": "Something went wrong while fetching verses",
+    "noVersesFound": "No verses found for your mood",
+    "generalError": "Something went wrong while fetching verses"
+  },
+  "languages": {
+    "english": "English",
+    "bengali": "Bengali"
+  },
+  "scripts": {
+    "indopak": "Indopak",
+    "uthmani": "Uthmani"
+  },
+  "loading": "Loading..."
 }

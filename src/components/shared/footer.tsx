@@ -1,14 +1,17 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { LanguageSwitch } from "./language-switch"
 import { ScriptSwitch } from "./script-switch"
 
 export function Footer() {
+  const t = useTranslations("footer")
+
   return (
     <footer className="bg-background/50 mt-auto flex h-[var(--footer-height)] items-center border-t backdrop-blur-sm">
       <div className="smart-container">
         <div className="flex flex-col-reverse items-center justify-center gap-2 sm:flex-row sm:justify-between">
-          <div className="text-muted-foreground text-sm">Find verses that speak to your soul</div>
+          <div className="text-muted-foreground text-sm">{t("tagline")}</div>
 
           <div className="flex items-center gap-2">
             <LanguageSwitch />

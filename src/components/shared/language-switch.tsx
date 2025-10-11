@@ -2,20 +2,21 @@
 
 import { usePathname, useRouter } from "@/i18n/navigation"
 import { cn } from "@/lib/utils"
-import { Locale, useLocale } from "next-intl"
+import { Locale, useLocale, useTranslations } from "next-intl"
 import { useParams } from "next/navigation"
 import { startTransition } from "react"
-
-const languages = [
-  { code: "en" as Locale, name: "English", flag: "🇺🇸" },
-  { code: "bn" as Locale, name: "Bengali", flag: "🇧🇩" },
-]
 
 export function LanguageSwitch() {
   const router = useRouter()
   const pathname = usePathname()
   const params = useParams()
   const currentLocale = useLocale()
+  const t = useTranslations("languages")
+
+  const languages = [
+    { code: "en" as Locale, name: t("english"), flag: "🇺🇸" },
+    { code: "bn" as Locale, name: t("bengali"), flag: "🇧🇩" },
+  ]
 
   function handleLocaleChange(locale: string) {
     startTransition(() => {

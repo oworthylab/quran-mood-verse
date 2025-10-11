@@ -4,7 +4,7 @@ import { env } from "@/env"
 import { Locale, routing } from "@/i18n/routing"
 import { Metadata } from "next"
 import { hasLocale, NextIntlClientProvider } from "next-intl"
-import { setRequestLocale } from "next-intl/server"
+import { getTranslations, setRequestLocale } from "next-intl/server"
 
 import { Footer } from "@/components/shared/footer"
 import { Provider } from "@/contexts"
@@ -24,15 +24,20 @@ const kfgqpcNaskh = LocaleFont({
   src: "../../../public/fonts/kfgqpc-taha-naskh.ttf",
 })
 
-export const metadata: Metadata = {
-  metadataBase: new URL(env.NEXT_PUBLIC_ORIGIN),
-  title: "Find your verses",
-  description: "Discover verse based on you mood, situation or topic.",
-}
-
 type LayoutProps = {
   children: React.ReactNode
   params: Promise<{ locale: Locale }>
+}
+
+export async function generateMetadata({ params }: LayoutProps): Promise<Metadata> {
+  const locale = (await params).locale
+  const t = await getTranslations({ locale, namespace: "app" })
+
+  return {
+    metadataBase: new URL(env.NEXT_PUBLIC_ORIGIN),
+    title: t("title"),
+    description: t("description"),
+  }
 }
 
 export function generateStaticParams() {

@@ -2,14 +2,16 @@
 
 import { cn } from "@/lib/utils"
 import { useScriptStore } from "@/stores/script-store"
-
-const scripts = [
-  { code: "indopak" as const, name: "Indopak" },
-  { code: "uthmani" as const, name: "Uthmani" },
-]
+import { useTranslations } from "next-intl"
 
 export function ScriptSwitch() {
   const { setScript, script } = useScriptStore()
+  const t = useTranslations("scripts")
+
+  const scripts = [
+    { code: "indopak" as const, name: t("indopak") },
+    { code: "uthmani" as const, name: t("uthmani") },
+  ]
 
   return (
     <div className="bg-background/80 flex max-w-fit items-center gap-1 rounded border p-1">

@@ -2,17 +2,6 @@ import { routing } from "@/i18n/routing"
 import { Formats, hasLocale } from "next-intl"
 import { getRequestConfig } from "next-intl/server"
 
-// eslint-disable-next-line import/no-default-export
-export default getRequestConfig(async (context) => {
-  const requested = await context.requestLocale
-  const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale
-
-  return {
-    locale,
-    messages: (await import(`./messages/${locale}.json`)).default,
-  }
-})
-
 export const formats = {
   dateTime: {
     short: {
@@ -35,3 +24,15 @@ export const formats = {
     },
   },
 } satisfies Formats
+
+// eslint-disable-next-line import/no-default-export
+export default getRequestConfig(async (context) => {
+  const requested = await context.requestLocale
+  const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale
+
+  return {
+    locale,
+    messages: (await import(`./messages/${locale}.json`)).default,
+    formats,
+  }
+})
