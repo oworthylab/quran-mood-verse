@@ -1,3 +1,4 @@
+/* eslint-disable react-func/max-lines-per-function */
 import "@/styles/index.css"
 
 import { env } from "@/env"
@@ -8,6 +9,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server"
 
 import { Footer } from "@/components/shared/footer"
 import { Provider } from "@/contexts"
+import { joinUrl } from "@/lib/url"
 import { Hind_Siliguri, Inter } from "next/font/google"
 import LocaleFont from "next/font/local"
 import { notFound } from "next/navigation"
@@ -42,6 +44,54 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
     metadataBase: new URL(env.NEXT_PUBLIC_ORIGIN),
     title: t("title"),
     description: t("description"),
+    icons: {
+      icon: joinUrl(env.NEXT_PUBLIC_ORIGIN, "/icons/favicon.ico"),
+      shortcut: joinUrl(env.NEXT_PUBLIC_ORIGIN, "/icons/favicon-16x16.png"),
+      apple: joinUrl(env.NEXT_PUBLIC_ORIGIN, "/icons/apple-touch-icon.png"),
+      other: [
+        {
+          rel: "android-chrome",
+          sizes: "192x192",
+          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "/icons/android-chrome-192x192.png"),
+        },
+        {
+          rel: "android-chrome",
+          sizes: "512x512",
+          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "/icons/android-chrome-512x512.png"),
+        },
+      ],
+    },
+    openGraph: {
+      locale,
+      title: t("title"),
+      description: t("description"),
+      type: "website",
+      images: [
+        {
+          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "screenshots/screen-chat-input.jpeg"),
+          alt: t("title"),
+        },
+        {
+          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "screenshots/screen-verses.jpeg"),
+          alt: t("title"),
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description: t("description"),
+      images: [
+        {
+          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "screenshots/screen-chat-input.jpeg"),
+          alt: t("title"),
+        },
+        {
+          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "screenshots/screen-verses.jpeg"),
+          alt: t("title"),
+        },
+      ],
+    },
   }
 }
 

@@ -11,7 +11,10 @@ const SYSTEM_PROMPT = `
 You are an Islamic scholar assistant. Your task is to suggest relevant Quranic verses based on a user's emotional state or mood.
 
 Instructions:
-- When given a mood or feeling, respond with a list of 3-5 verse keys, each on a new line, inside a <verse-keys> tag.
+- When given a mood or feeling, respond with a list of 2-10 verse keys, each on a new line, inside a <verse-keys> tag.
+  - minimum 2 verses
+  - maximum 10 verses
+  - Format each verse key as <surah_number>:<verse_number> (2:255).
 - The most relevant and well-known verse for the mood should come first in the list.
 - Include a <mood-label> tag with a short description of the mood, which should be short, respectful, and not technical.
 - Do not include any explanations or extra text, only the verse keys in the specified format.
@@ -24,6 +27,8 @@ Hope
 2:286
 94:5
 39:53
+111:3
+5:23
 </verse-keys>
 
 Guidelines for verse selection:
@@ -41,7 +46,7 @@ Special Cases:
 - If the mood is unclear, gibberish, or not understandable, respond with verses about confusion, seeking guidance, or Allah's knowledge.
 
 Output Format:
-- Only the verse keys, inside <verse-keys> tags, nothing else.
+- include only the <mood-label> and <verse-keys> tags, and nothing else.
 `
 
 export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
@@ -150,6 +155,7 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
       })
 
       const verseResults = await Promise.allSettled(versePromises)
+
       const verses = verseResults
         .map((result) => (result.status === "fulfilled" ? result.value! : null))
         .filter((verse) => verse !== null)
