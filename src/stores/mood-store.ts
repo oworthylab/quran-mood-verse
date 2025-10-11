@@ -1,5 +1,8 @@
+/* eslint-disable react-func/max-lines-per-function */
+
 import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { combine, persist } from "zustand/middleware"
+import { immer } from "zustand/middleware/immer"
 
 import z from "zod"
 
@@ -24,39 +27,60 @@ export const VerseSchema = z.object({
 
 export type Verse = z.infer<typeof VerseSchema>
 
-interface MoodState {
-  mood: string
-  currentMood: string
-  savedVerses: Verse[]
-  submitError: string | null
-}
-
-interface MoodActions {
-  setMood: (mood: string) => void
-  setCurrentMood: (currentMood: string) => void
-  setSavedVerses: (verses: Verse[]) => void
-  setSubmitError: (error: string | null) => void
-  updateVersesResult: (verses: Verse[], mood: string) => void
-  clearMoodState: () => void
-}
-
-type MoodStore = MoodState & MoodActions
-
-export const useMoodStore = create<MoodStore>()(
+export const useMoodStore = create(
   persist(
-    (set) => ({
-      mood: "",
-      currentMood: "",
-      savedVerses: [],
-      submitError: null,
-      setMood: (mood) => set({ mood }),
-      setCurrentMood: (currentMood) => set({ currentMood }),
-      setSavedVerses: (verses) => set({ savedVerses: verses }),
-      setSubmitError: (error) => set({ submitError: error }),
-      updateVersesResult: (verses, mood) =>
-        set({ savedVerses: verses, currentMood: mood, submitError: null }),
-      clearMoodState: () => set({ mood: "", currentMood: "", savedVerses: [], submitError: null }),
-    }),
+    immer(
+      combine(
+        {
+          mood: "",
+          currentMood: "",
+          savedVerses: [] as Verse[],
+          submitError: null as string | null,
+        },
+        (set) => ({
+          setMood(mood: string) {
+            set((store) => {
+              store.mood = mood
+            })
+          },
+
+          setCurrentMood(currentMood: string) {
+            set((store) => {
+              store.currentMood = currentMood
+            })
+          },
+
+          setSavedVerses(verses: Verse[]) {
+            set((store) => {
+              store.savedVerses = verses
+            })
+          },
+
+          setSubmitError(error: string | null) {
+            set((store) => {
+              store.submitError = error
+            })
+          },
+
+          updateVersesResult(verses: Verse[], mood: string) {
+            set((store) => {
+              store.savedVerses = verses
+              store.currentMood = mood
+              store.submitError = null
+            })
+          },
+
+          clearMoodState() {
+            set((store) => {
+              store.mood = ""
+              store.currentMood = ""
+              store.savedVerses = []
+              store.submitError = null
+            })
+          },
+        })
+      )
+    ),
     {
       name: "quran-mood-explorer-state",
       partialize: (state) => ({
