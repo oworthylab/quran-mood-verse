@@ -151,6 +151,7 @@ namespace QuranFoundation {
     text_imlaei?: string
     text_imlaei_simple?: string
     text_indopak?: string
+    text_indopak_nastaleeq?: string
     text_uthmani_tajweed?: string
     juz_number: number
     hizb_number: number

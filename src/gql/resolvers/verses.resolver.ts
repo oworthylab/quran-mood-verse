@@ -118,7 +118,11 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
 
       const versePromises = verseKeys.map(async (key) => {
         const verse = await quranSQK.getVerse(key, {
-          fields: { text_indopak: true, text_uthmani: true, chapter_id: true },
+          fields: {
+            text_uthmani: true,
+            chapter_id: true,
+            text_indopak_nastaleeq: true,
+          },
           translations: "161,85",
           translation_fields: {
             language_name: true,
@@ -130,8 +134,8 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
           number: verse.verse.verse_number,
 
           scripts: [
-            { name: "Indopak", text: verse.verse.text_indopak },
-            { name: "Uthmani", text: verse.verse.text_uthmani },
+            { name: "Indopak", text: verse.verse.text_indopak_nastaleeq! },
+            { name: "Uthmani", text: verse.verse.text_uthmani! },
           ],
 
           translations: verse.verse.translations!.map((t) => ({
