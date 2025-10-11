@@ -210,6 +210,9 @@
 
 @layer base {
   :root {
+    --full-screen: 100vh;
+    --fs: 100vh;
+
     --max-container-width: 56rem;
     --container-x-gap: 1rem;
 
@@ -220,6 +223,13 @@
     :root {
       --container-x-gap: 2rem;
       --footer-height: 4rem;
+    }
+  }
+
+  @supports (height: 100dvh) {
+    :root {
+      --full-screen: 100dvh;
+      --fs: 100dvh;
     }
   }
 

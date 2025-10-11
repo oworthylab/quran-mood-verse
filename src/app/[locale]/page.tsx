@@ -1,15 +1,21 @@
-import { QuranMoodExplorer } from "@/components/quran-mood-explorer"
-import { Locale, routing } from "@/i18n/routing"
-import { hasLocale } from "next-intl"
-import { setRequestLocale } from "next-intl/server"
-import { notFound } from "next/navigation"
+"use client"
 
-export default async function Index({ params }: { params: Promise<{ locale: Locale }> }) {
-  const locale = (await params).locale
-  if (!hasLocale(routing.locales, locale)) notFound()
+import { Loader2 } from "lucide-react"
+import dynamic from "next/dynamic"
 
-  setRequestLocale(locale)
+const QuranMoodExplorer = dynamic(
+  () => import("@/components/quran-mood-explorer").then((mod) => mod.QuranMoodExplorer),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-[calc(var(--fs)-var(--footer-height))] items-center justify-center">
+        <Loader2 className="text-muted-foreground size-8 animate-spin" />
+      </div>
+    ),
+  }
+)
 
+export default function Index() {
   return (
     <main className="smart-container">
       <QuranMoodExplorer />
