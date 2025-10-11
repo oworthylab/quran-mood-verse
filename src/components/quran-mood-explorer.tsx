@@ -1,5 +1,7 @@
 "use client"
 
+/* eslint-disable max-lines */
+
 import { GlowingEdge } from "@/components/shared/glowing-edge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -18,7 +20,8 @@ import { ArrowUp, Loader2, Sparkles, SquareArrowOutUpRight } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
 import { Fragment } from "react"
 
-const localeMap = { en: "english", bn: "bengali" }
+const languageLocaleMap = { en: "english", bn: "bengali" }
+const transitionLocaleMap = { en: "85", bn: "161" }
 
 export function QuranMoodExplorer() {
   const locale = useLocale()
@@ -74,7 +77,7 @@ export function QuranMoodExplorer() {
   }
 
   function getTranslation(translations: Verse["translations"]) {
-    return translations.find((t) => t.languageId.toLowerCase() === localeMap[locale])!.text
+    return translations.find((t) => t.languageId.toLowerCase() === languageLocaleMap[locale])!.text
   }
 
   return (
@@ -174,7 +177,7 @@ export function QuranMoodExplorer() {
                       <a
                         target="_blank"
                         rel="noopener noreferrer"
-                        href={`https://quran.com/${verse.surah.number}?startingVerse=${verse.number}`}
+                        href={`https://quran.com/${verse.surah.number}?startingVerse=${verse.number}&translations=${transitionLocaleMap[locale]}`}
                         className="bg-primary/80 text-primary-foreground font-inter inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium"
                       >
                         {verse.surah.number}:{verse.number}
