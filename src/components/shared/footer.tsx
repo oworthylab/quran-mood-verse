@@ -1,8 +1,9 @@
 "use client"
 
+import { LanguageSwitch } from "@/components/shared/language-switch"
+import { ScriptSwitch } from "@/components/shared/script-switch"
+import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { useTranslations } from "next-intl"
-import { LanguageSwitch } from "./language-switch"
-import { ScriptSwitch } from "./script-switch"
 
 export function Footer() {
   const t = useTranslations("footer")
@@ -14,6 +15,7 @@ export function Footer() {
           <div className="text-muted-foreground text-sm">{t("tagline")}</div>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <LanguageSwitch />
             <ScriptSwitch />
           </div>
