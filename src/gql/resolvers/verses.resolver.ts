@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 import { LRUCache } from "lru-cache"
 import { NextRequest } from "next/server"
 
-const RATE_LIMIT_WINDOW = 30 * 1000
+const RATE_LIMIT_WINDOW = 60 * 1000
 const rateLimitCache = new LRUCache<string, number>({ max: 10000, ttl: RATE_LIMIT_WINDOW })
 
 const SYSTEM_PROMPT = `

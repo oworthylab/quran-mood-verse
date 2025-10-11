@@ -241,8 +241,6 @@ export class QFSDK {
       },
     })
 
-    console.log("QF API Response:", JSON.stringify(response.data, null, 2)) // Debug: Show the response
-
     return response.data
   }
 
