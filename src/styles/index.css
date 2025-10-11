@@ -3,19 +3,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme {
-  --font-sans: var(--ff-inter), sans-serif;
-  --font-arabic: var(--ff-indopak-nastaleeq), sans-serif;
-}
-
 @theme inline {
   --radius: 0.65rem;
 
   --font-sans: var(--ff-inter), sans-serif;
-  --font-arabic: var(--ff-indopak-nastaleeq), sans-serif;
+  --font-arabic: var(--ff-nastaleeq), sans-serif;
 
-  --font-arabic-indopak: var(--ff-indopak-nastaleeq), sans-serif;
-  --font-arabic-uthmani: var(--ff-kfgqpc-taha-naskh), sans-serif;
+  --font-arabic-indopak: var(--ff-nastaleeq), sans-serif;
+  --font-arabic-uthmani: var(--ff-kfgqpc), sans-serif;
 
   --radius-xs: calc(var(--radius) * 0.333);
   --radius-sm: calc(var(--radius) * 0.666);

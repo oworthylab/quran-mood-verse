@@ -30,7 +30,7 @@ export function QuranMoodExplorer() {
   const MOOD_PRESETS = [
     { label: t("moods.grateful"), key: "Grateful", emoji: "✨" },
     { label: t("moods.sad"), key: "Sad", emoji: "😔" },
-    { label: t("moods.seekingForgiveness"), key: "Seeking Forgiveness", emoji: "💫" },
+    { label: t("moods.seeking-forgiveness"), key: "Seeking Forgiveness", emoji: "💫" },
     { label: t("moods.anxious"), key: "Anxious", emoji: "😰" },
     { label: t("moods.angry"), key: "Angry", emoji: "😡" },
   ]
@@ -50,16 +50,16 @@ export function QuranMoodExplorer() {
       const error = errors ? errors[0]! : undefined
 
       if (error) {
-        return store.setSubmitError(error.message || t("errors.fetchingVerses"))
+        return store.setSubmitError(error.message || t("errors.fetching-verses"))
       }
 
       if (data?.getVersesByMood?.verses && data.getVersesByMood.verses.length > 0) {
         store.updateVersesResult(data.getVersesByMood.verses, data.getVersesByMood.mood)
       } else {
-        store.setSubmitError(t("errors.noVersesFound"))
+        store.setSubmitError(t("errors.no-verses-found"))
       }
     } catch (_err) {
-      store.setSubmitError(t("errors.generalError"))
+      store.setSubmitError(t("errors.general-error"))
     }
   }
 
@@ -98,7 +98,7 @@ export function QuranMoodExplorer() {
                   onSubmit={() => void handleSubmit(store.mood)}
                 >
                   <PromptInputTextarea
-                    placeholder={t("home.moodPrompt")}
+                    placeholder={t("home.mood-prompt")}
                     className="placeholder:text-muted-foreground text-foreground text-base"
                     disabled={loading}
                   />
@@ -107,7 +107,7 @@ export function QuranMoodExplorer() {
                       {store.mood.trim().length}/200
                     </div>
                     <PromptInputAction
-                      tooltip={loading ? t("home.findingVerses") : t("home.findVerses")}
+                      tooltip={loading ? t("home.finding-verses") : t("home.find-verses")}
                     >
                       <Button
                         variant="default"
@@ -157,10 +157,10 @@ export function QuranMoodExplorer() {
       ) : (
         <div className="my-8 flex flex-col gap-8">
           <div className="flex flex-col gap-1 text-center">
-            <h2 className="text-2xl font-semibold">{t("home.versesForSoul")}</h2>
+            <h2 className="text-2xl font-semibold">{t("home.verses-for-soul")}</h2>
             {store.currentMood && (
               <p className="text-muted-foreground">
-                {t("home.basedOnMood", { mood: store.currentMood })}
+                {t("home.based-on-mood", { mood: store.currentMood })}
               </p>
             )}
           </div>
@@ -211,7 +211,7 @@ export function QuranMoodExplorer() {
               className="border-primary/20 hover:border-primary hover:bg-primary/5 hover:text-primary gap-2 px-6 py-3 transition-all duration-200"
             >
               <Sparkles className="h-4 w-4" />
-              {t("home.moodChanged")}
+              {t("home.mood-changed")}
             </Button>
           </div>
         </div>

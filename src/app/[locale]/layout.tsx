@@ -15,13 +15,13 @@ import { notFound } from "next/navigation"
 const inter = Inter({ subsets: ["latin"], variable: "--ff-inter" })
 
 const nastaleeq = LocaleFont({
-  variable: "--ff-indopak-nastaleeq",
-  src: "../../../public/fonts/indopak-nastaleeq.ttf",
+  variable: "--ff-nastaleeq",
+  src: "../../../public/fonts/nastaleeq.ttf",
 })
 
 const kfgqpcNaskh = LocaleFont({
-  variable: "--ff-kfgqpc-taha-naskh",
-  src: "../../../public/fonts/kfgqpc-taha-naskh.ttf",
+  variable: "--ff-kfgqpc",
+  src: "../../../public/fonts/kfgqpc.otf",
 })
 
 type LayoutProps = {
