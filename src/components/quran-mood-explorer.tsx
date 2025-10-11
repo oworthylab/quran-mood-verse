@@ -1,5 +1,6 @@
 "use client"
 
+import { GlowingEdge } from "@/components/shared/glowing-edge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import {
@@ -85,39 +86,43 @@ export function QuranMoodExplorer() {
             </div>
 
             <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-              <PromptInput
-                value={store.mood}
-                onValueChange={(value) => {
-                  store.setMood(value.slice(0, 200))
-                  if (store.submitError) store.setSubmitError(null)
-                }}
-                isLoading={loading}
-                onSubmit={() => void handleSubmit(store.mood)}
-              >
-                <PromptInputTextarea
-                  placeholder="How are you feeling today?"
-                  className="placeholder:text-muted-foreground/60 text-foreground text-base"
-                  disabled={loading}
-                />
-                <PromptInputActions className="items-center justify-between">
-                  <div className="text-muted-foreground ml-2 text-xs">{store.mood.length}/200</div>
-                  <PromptInputAction tooltip={loading ? "Finding verses..." : "Find verses"}>
-                    <Button
-                      variant="default"
-                      size="icon"
-                      className="h-10 w-10 rounded-full shadow-md transition-all duration-200 hover:shadow-lg"
-                      disabled={loading || !store.mood.trim()}
-                      onClick={() => void handleSubmit(store.mood)}
-                    >
-                      {loading ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                      ) : (
-                        <ArrowUp className="h-5 w-5" />
-                      )}
-                    </Button>
-                  </PromptInputAction>
-                </PromptInputActions>
-              </PromptInput>
+              <GlowingEdge onHover always={loading || !!store.mood} round="1.95rem" size="0.25rem">
+                <PromptInput
+                  value={store.mood}
+                  onValueChange={(value) => {
+                    store.setMood(value.slice(0, 200))
+                    if (store.submitError) store.setSubmitError(null)
+                  }}
+                  isLoading={loading}
+                  onSubmit={() => void handleSubmit(store.mood)}
+                >
+                  <PromptInputTextarea
+                    placeholder="How are you feeling today?"
+                    className="placeholder:text-muted-foreground text-foreground text-base"
+                    disabled={loading}
+                  />
+                  <PromptInputActions className="items-center justify-between">
+                    <div className="text-muted-foreground ml-2 text-xs">
+                      {store.mood.length}/200
+                    </div>
+                    <PromptInputAction tooltip={loading ? "Finding verses..." : "Find verses"}>
+                      <Button
+                        variant="default"
+                        size="icon"
+                        className="h-10 w-10 rounded-full shadow-md transition-all duration-200 hover:shadow-lg"
+                        disabled={loading || !store.mood.trim()}
+                        onClick={() => void handleSubmit(store.mood)}
+                      >
+                        {loading ? (
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        ) : (
+                          <ArrowUp className="h-5 w-5" />
+                        )}
+                      </Button>
+                    </PromptInputAction>
+                  </PromptInputActions>
+                </PromptInput>
+              </GlowingEdge>
 
               {store.submitError && (
                 <Card className="bg-destructive/10 border-destructive/20 p-4">
