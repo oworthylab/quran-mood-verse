@@ -1,4 +1,5 @@
-/* eslint-disable react-func/max-lines-per-function */
+/* eslint-disable @next/next/next-script-for-ga, react-func/max-lines-per-function */
+
 import "@/styles/index.css"
 
 import { env } from "@/env"
@@ -113,6 +114,20 @@ export default async function Layout({ children, params }: LayoutProps) {
 
   return (
     <html lang={locale} suppressHydrationWarning>
+      <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-0ZM7PK9RHH" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+
+              gtag('config', 'G-0ZM7PK9RHH');
+          `,
+          }}
+        />
+      </head>
       <body
         className={[
           "from-background to-muted/20 flex min-h-screen flex-col bg-gradient-to-b antialiased",
