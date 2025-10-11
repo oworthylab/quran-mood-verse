@@ -42,6 +42,7 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
 
   return {
     metadataBase: new URL(env.NEXT_PUBLIC_ORIGIN),
+    robots: { index: true, follow: true },
     title: t("title"),
     description: t("description"),
     icons: {
@@ -66,13 +67,14 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
       title: t("title"),
       description: t("description"),
       type: "website",
+      siteName: t("name"),
       images: [
         {
-          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "screenshots/screen-chat-input.jpeg"),
+          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "screenshots/screen-chat-input.png"),
           alt: t("title"),
         },
         {
-          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "screenshots/screen-verses.jpeg"),
+          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "screenshots/screen-verses.png"),
           alt: t("title"),
         },
       ],
@@ -83,11 +85,11 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
       description: t("description"),
       images: [
         {
-          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "screenshots/screen-chat-input.jpeg"),
+          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "screenshots/screen-chat-input.png"),
           alt: t("title"),
         },
         {
-          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "screenshots/screen-verses.jpeg"),
+          url: joinUrl(env.NEXT_PUBLIC_ORIGIN, "screenshots/screen-verses.png"),
           alt: t("title"),
         },
       ],

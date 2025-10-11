@@ -1,5 +1,6 @@
 {
   "app": {
+    "name": "Quran Mood Explorer",
     "title": "Quran Mood Explorer - Find Verses by Emotion & Situation",
     "description": "Discover Quranic verses that resonate with your current mood and life situation. Find comfort, guidance, and wisdom from the Holy Quran through our intelligent verse recommendation system. Perfect for spiritual reflection and emotional support."
   },
