@@ -1,7 +1,5 @@
 "use client"
 
-/* eslint-disable max-lines */
-
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import {
@@ -12,72 +10,14 @@ import {
 } from "@/components/ui/prompt-input"
 import { GET_VERSES_BY_MOOD } from "@/gql/queries/verses.query"
 import { cn } from "@/lib/utils"
+import { useMoodStore, type Verse } from "@/stores/mood-store"
 import { useScriptStore } from "@/stores/script-store"
 import { useLazyQuery } from "@apollo/client"
 import { ArrowUp, Loader2, Sparkles, SquareArrowOutUpRight } from "lucide-react"
 import { useLocale } from "next-intl"
-import { Fragment, useState } from "react"
-import z from "zod"
-
-const verseSchema = z.object({
-  number: z.number(),
-  surah: z.object({ number: z.number() }),
-
-  scripts: z.array(
-    z.object({
-      name: z.string(),
-      text: z.string(),
-    })
-  ),
-
-  translations: z.array(
-    z.object({
-      languageId: z.string(),
-      text: z.string(),
-    })
-  ),
-})
+import { Fragment } from "react"
 
 const localeMap = { en: "english", bn: "bengali" }
-
-const versesSchema = z.array(verseSchema)
-
-type Verse = z.infer<typeof verseSchema>
-
-const LOCAL_STORAGE_QURAN_MOOD_VERSES_KEY = "QURAN_MOOD_VERSES"
-
-const localeStorageSchema = z.object({
-  verses: versesSchema,
-  mood: z.string(),
-  timestamp: z.coerce.number(),
-})
-
-function setLocaleVerses(verses: Verse[], mood: string) {
-  const versesToSave = {
-    verses: verses,
-    mood: mood,
-    timestamp: Date.now(),
-  }
-
-  localStorage.setItem(
-    LOCAL_STORAGE_QURAN_MOOD_VERSES_KEY,
-    JSON.stringify(localeStorageSchema.parse(versesToSave))
-  )
-
-  return versesToSave
-}
-
-function getLocaleVerses() {
-  if (typeof window === "undefined") return undefined
-
-  const data = localStorage.getItem(LOCAL_STORAGE_QURAN_MOOD_VERSES_KEY)
-  if (!data) return undefined
-
-  const result = localeStorageSchema.safeParse(JSON.parse(data))
-  if (!result.success) return undefined
-
-  return result.data
-}
 
 const MOOD_PRESETS = [
   { label: "Grateful", emoji: "✨" },
@@ -87,52 +27,45 @@ const MOOD_PRESETS = [
   { label: "Angry", emoji: "😡" },
 ]
 
-const initialState = getLocaleVerses()
-
 export function QuranMoodExplorer() {
   const locale = useLocale()
+
+  const store = useMoodStore()
   const { script } = useScriptStore()
 
-  const [mood, setMood] = useState("")
-  const [currentMood, setCurrentMood] = useState(initialState?.mood ?? "")
-  const [savedVerses, setSavedVerses] = useState<Array<Verse>>(initialState?.verses ?? [])
-  const [submitError, setSubmitError] = useState<string | null>(null)
-
-  const [getVerses, { loading }] = useLazyQuery(GET_VERSES_BY_MOOD)
+  const [getVerses, { loading }] = useLazyQuery(GET_VERSES_BY_MOOD, {
+    errorPolicy: "all",
+  })
 
   async function handleSubmit(moodInput: string) {
     const mood = moodInput.trim()
     if (!mood) return
 
-    setSubmitError(null)
+    store.setSubmitError(null)
 
     try {
-      const { data, errors } = await getVerses({ variables: { mood }, errorPolicy: "all" })
+      const { data, errors } = await getVerses({ variables: { mood } })
       const error = errors ? errors[0]! : undefined
 
       if (error) {
-        return setSubmitError(error.message || "Something went wrong while fetching verses")
+        return store.setSubmitError(error.message || "Something went wrong while fetching verses")
       }
 
       if (data?.getVersesByMood?.verses && data.getVersesByMood.verses.length > 0) {
-        setCurrentMood(data.getVersesByMood.mood)
-        setLocaleVerses(data.getVersesByMood.verses, data.getVersesByMood.mood)
-        setSavedVerses(data.getVersesByMood.verses)
+        store.updateVersesResult(data.getVersesByMood.verses, data.getVersesByMood.mood)
       } else {
-        setSubmitError("No verses found for your mood.")
+        store.setSubmitError("No verses found for your mood.")
       }
     } catch (_err) {
-      setSubmitError("Something went wrong while fetching verses.")
+      store.setSubmitError("Something went wrong while fetching verses.")
     }
   }
 
   function handleChangeMood() {
-    setMood("")
-    setSavedVerses([])
-    localStorage.removeItem(LOCAL_STORAGE_QURAN_MOOD_VERSES_KEY)
+    store.clearMoodState()
   }
 
-  const verses = savedVerses.length > 0 ? savedVerses : []
+  const verses = store.savedVerses.length > 0 ? store.savedVerses : []
 
   function getScript(scripts: Verse["scripts"]) {
     return scripts.find((option) => option.name.toLowerCase() === script)!.text
@@ -153,13 +86,13 @@ export function QuranMoodExplorer() {
 
             <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
               <PromptInput
-                value={mood}
+                value={store.mood}
                 onValueChange={(value) => {
-                  setMood(value.slice(0, 200))
-                  if (submitError) setSubmitError(null)
+                  store.setMood(value.slice(0, 200))
+                  if (store.submitError) store.setSubmitError(null)
                 }}
                 isLoading={loading}
-                onSubmit={() => void handleSubmit(mood)}
+                onSubmit={() => void handleSubmit(store.mood)}
               >
                 <PromptInputTextarea
                   placeholder="How are you feeling today?"
@@ -167,14 +100,14 @@ export function QuranMoodExplorer() {
                   disabled={loading}
                 />
                 <PromptInputActions className="items-center justify-between">
-                  <div className="text-muted-foreground ml-2 text-xs">{mood.length}/200</div>
+                  <div className="text-muted-foreground ml-2 text-xs">{store.mood.length}/200</div>
                   <PromptInputAction tooltip={loading ? "Finding verses..." : "Find verses"}>
                     <Button
                       variant="default"
                       size="icon"
                       className="h-10 w-10 rounded-full shadow-md transition-all duration-200 hover:shadow-lg"
-                      disabled={loading || !mood.trim()}
-                      onClick={() => void handleSubmit(mood)}
+                      disabled={loading || !store.mood.trim()}
+                      onClick={() => void handleSubmit(store.mood)}
                     >
                       {loading ? (
                         <Loader2 className="h-5 w-5 animate-spin" />
@@ -186,9 +119,9 @@ export function QuranMoodExplorer() {
                 </PromptInputActions>
               </PromptInput>
 
-              {submitError && (
+              {store.submitError && (
                 <Card className="bg-destructive/10 border-destructive/20 p-4">
-                  <p className="text-destructive text-sm">{submitError}</p>
+                  <p className="text-destructive text-sm">{store.submitError}</p>
                 </Card>
               )}
 
@@ -199,7 +132,7 @@ export function QuranMoodExplorer() {
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      setMood(preset.label)
+                      store.setMood(preset.label)
                       void handleSubmit(preset.label)
                     }}
                     disabled={loading}
@@ -217,9 +150,9 @@ export function QuranMoodExplorer() {
         <div className="my-8 flex flex-col gap-8">
           <div className="flex flex-col gap-1 text-center">
             <h2 className="text-2xl font-semibold">Verses for your soul</h2>
-            {currentMood && (
+            {store.currentMood && (
               <p className="text-muted-foreground">
-                Based on your mood: <span className="font-medium">{currentMood}</span>
+                Based on your mood: <span className="font-medium">{store.currentMood}</span>
               </p>
             )}
           </div>
@@ -251,7 +184,6 @@ export function QuranMoodExplorer() {
                         {getScript(verse.scripts)}
                       </p>
                     </div>
-
                     <div>
                       <p className="text-foreground/90 text-lg leading-loose">
                         {getTranslation(verse.translations)}
