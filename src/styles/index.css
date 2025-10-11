@@ -6,7 +6,9 @@
 @theme inline {
   --radius: 0.65rem;
 
-  --font-sans: var(--ff-inter), sans-serif;
+  --font-inter: var(--ff-inter), sans-serif;
+  --font-hind-siliguri: var(--ff-hind-siliguri), sans-serif;
+
   --font-arabic: var(--ff-nastaleeq), sans-serif;
 
   --font-arabic-indopak: var(--ff-nastaleeq), sans-serif;

@@ -175,7 +175,7 @@ export function QuranMoodExplorer() {
                         target="_blank"
                         rel="noopener noreferrer"
                         href={`https://quran.com/${verse.surah.number}?startingVerse=${verse.number}`}
-                        className="bg-primary/80 text-primary-foreground inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium"
+                        className="bg-primary/80 text-primary-foreground font-inter inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium"
                       >
                         {verse.surah.number}:{verse.number}
                         <SquareArrowOutUpRight className="size-3.5" />
@@ -193,7 +193,7 @@ export function QuranMoodExplorer() {
                       </p>
                     </div>
                     <div>
-                      <p className="text-foreground/90 text-lg leading-loose">
+                      <p className="text-foreground/90 text-base leading-loose">
                         {getTranslation(verse.translations)}
                       </p>
                     </div>

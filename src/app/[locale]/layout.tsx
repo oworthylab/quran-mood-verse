@@ -8,11 +8,16 @@ import { getTranslations, setRequestLocale } from "next-intl/server"
 
 import { Footer } from "@/components/shared/footer"
 import { Provider } from "@/contexts"
-import { Inter } from "next/font/google"
+import { Hind_Siliguri, Inter } from "next/font/google"
 import LocaleFont from "next/font/local"
 import { notFound } from "next/navigation"
 
 const inter = Inter({ subsets: ["latin"], variable: "--ff-inter" })
+const hindSiliguri = Hind_Siliguri({
+  subsets: ["latin"],
+  variable: "--ff-hind-siliguri",
+  weight: ["300", "400", "500", "600", "700"],
+})
 
 const nastaleeq = LocaleFont({
   variable: "--ff-nastaleeq",
@@ -44,6 +49,11 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
 
+const localeFontMap = {
+  bn: "font-hind-siliguri",
+  en: "font-inter",
+}
+
 export default async function Layout({ children, params }: LayoutProps) {
   const locale = (await params).locale
   if (!hasLocale(routing.locales, locale)) notFound()
@@ -53,10 +63,12 @@ export default async function Layout({ children, params }: LayoutProps) {
     <html lang={locale} suppressHydrationWarning>
       <body
         className={[
-          "from-background to-muted/20 flex min-h-screen flex-col bg-gradient-to-b font-sans antialiased",
+          "from-background to-muted/20 flex min-h-screen flex-col bg-gradient-to-b antialiased",
           inter.variable,
           nastaleeq.variable,
           kfgqpcNaskh.variable,
+          hindSiliguri.variable,
+          localeFontMap[locale] ?? "font-sans",
         ].join(" ")}
       >
         <NextIntlClientProvider locale={locale}>
