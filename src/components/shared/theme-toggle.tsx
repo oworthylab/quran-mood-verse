@@ -33,8 +33,11 @@ export function ThemeToggle() {
         const centerX = rect.left + rect.width / 2
         const centerY = rect.top + rect.height / 2
 
-        document.documentElement.style.setProperty("--x", centerX + "px")
-        document.documentElement.style.setProperty("--y", centerY + "px")
+        const xPercent = (centerX / window.innerWidth) * 100
+        const yPercent = (centerY / window.innerHeight) * 100
+
+        document.documentElement.style.setProperty("--x", `${xPercent}%`)
+        document.documentElement.style.setProperty("--y", `${yPercent}%`)
 
         if (document.startViewTransition) {
           document.startViewTransition(() => {
