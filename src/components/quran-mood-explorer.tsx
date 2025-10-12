@@ -83,9 +83,9 @@ export function QuranMoodExplorer() {
   return (
     <div>
       {verses.length <= 0 ? (
-        <div className="flex min-h-[calc(var(--fs)-var(--footer-height))] flex-col items-center justify-center">
+        <div className="relative flex min-h-[calc(var(--fs)-var(--footer-height))] flex-col items-center justify-center">
           <div className="text-center">
-            <div className="mb-6 inline-flex items-center gap-2 text-center text-2xl">
+            <div className="mb-6 inline-flex items-center gap-2 text-center text-2xl text-balance">
               {t("home.tagline")}
             </div>
 
