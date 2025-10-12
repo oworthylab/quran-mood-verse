@@ -27,7 +27,23 @@ export function ThemeToggle() {
       variant="secondary"
       size="icon"
       className="size-[2.125rem]"
-      onClick={() => setTheme(resolvedTheme === "light" ? "dark" : "light")}
+      onClick={(evt) => {
+        const rect = evt.currentTarget.getBoundingClientRect()
+
+        const centerX = rect.left + rect.width / 2
+        const centerY = rect.top + rect.height / 2
+
+        document.documentElement.style.setProperty("--x", centerX + "px")
+        document.documentElement.style.setProperty("--y", centerY + "px")
+
+        if (document.startViewTransition) {
+          document.startViewTransition(() => {
+            setTheme(resolvedTheme === "light" ? "dark" : "light")
+          })
+        } else {
+          setTheme(resolvedTheme === "light" ? "dark" : "light")
+        }
+      }}
     >
       {resolvedTheme === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}
 
