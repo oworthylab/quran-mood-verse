@@ -90,7 +90,7 @@ export function QuranMoodExplorer() {
             </div>
 
             <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-              <GlowingEdge onHover always={loading || !!store.mood} round="1.95rem" size="0.25rem">
+              <GlowingEdge onHover always={loading} round="1.95rem" size="0.25rem">
                 <PromptInput
                   value={store.mood}
                   onValueChange={(value) => {

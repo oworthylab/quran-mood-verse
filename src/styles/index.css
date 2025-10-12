@@ -223,7 +223,7 @@
     }
   }
 
-  @supports (height: 100dvh) {
+  @supports (height: 100svh) {
     :root {
       --full-screen: 100dvh;
       --fs: 100dvh;

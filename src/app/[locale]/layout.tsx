@@ -130,7 +130,7 @@ export default async function Layout({ children, params }: LayoutProps) {
       </head>
       <body
         className={[
-          "from-background to-muted/20 flex min-h-screen flex-col bg-gradient-to-b antialiased",
+          "from-background to-muted/20 flex min-h-[var(--fs)] flex-col bg-gradient-to-b antialiased",
           inter.variable,
           nastaleeq.variable,
           kfgqpcNaskh.variable,
