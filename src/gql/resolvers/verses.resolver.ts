@@ -7,8 +7,17 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 import { LRUCache } from "lru-cache"
 import { NextRequest } from "next/server"
 
-const RATE_LIMIT_WINDOW = 60 * 1000
-const rateLimitCache = new LRUCache<string, number>({ max: 10000, ttl: RATE_LIMIT_WINDOW })
+const RATE_LIMIT = {
+  WINDOW: 60 * 1000,  // 1 minute (in milliseconds)
+  CACHE_SIZE: 10000  // Maximum number of IPs to track
+}
+const MAX_INPUT_LENGTH = 200 // characters
+
+
+const rateLimitCache = new LRUCache<string, { count: number; lastRequest: number }>({ 
+  max: RATE_LIMIT.CACHE_SIZE, 
+  ttl: RATE_LIMIT.WINDOW 
+})
 
 const SYSTEM_PROMPT = `
 You are an Islamic scholar assistant. Your task is to suggest relevant Quranic verses based on a user's emotional state, mood, or described situation.
@@ -53,15 +62,31 @@ Output Format:
 `
 
 const aiResponseCache = new LRUCache<string, { verseKeys: string[]; mood: string }>({
-  max: 10_000,
+  max: RATE_LIMIT.CACHE_SIZE,
   ttl: calculateTTL({ days: 2 }),
 })
 
 function cleanUpInput(input: string) {
-  return input.trim().toLowerCase().replace(/\s+/g, " ")
+  if (!input || typeof input !== 'string') {
+    throw new Error('Invalid input: mood must be a non-empty string')
+  }
+  
+  if (input.length > MAX_INPUT_LENGTH) {
+    throw new Error(`Input too long: maximum ${MAX_INPUT_LENGTH} characters allowed`)
+  }
+
+  // Remove any HTML tags and normalize whitespace
+  return input
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
 }
 
 async function getVerseKeys(input: string) {
+  if (!env.GEMINI_API_KEY) {
+    throw new Error('API configuration error')
+  }
   const hash = createHash(cleanUpInput(input))
 
   if (aiResponseCache.get(hash)) {
@@ -134,8 +159,8 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
       const now = Date.now()
 
       const lastRequestTime = rateLimitCache.get(clientIp)
-      if (lastRequestTime && now - lastRequestTime < RATE_LIMIT_WINDOW) {
-        const remainingTime = Math.ceil((RATE_LIMIT_WINDOW - (now - lastRequestTime)) / 1000)
+      if (lastRequestTime && now - lastRequestTime < RATE_LIMIT.WINDOW) {
+        const remainingTime = Math.ceil((RATE_LIMIT.WINDOW - (now - lastRequestTime)) / 1000)
         throw new Error(
           `Rate limit exceeded wait ${remainingTime} seconds before making another request.`
         )
@@ -144,7 +169,7 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
       rateLimitCache.set(clientIp, now)
 
       const results = await getVerseKeys(mood).catch(() => {
-        throw new Error("Uses limit reached try again shortly")
+        throw new Error("Usage limit reached. Try again shortly.")
       })
 
       const versePromises = results.verseKeys.map(async (key) => {
