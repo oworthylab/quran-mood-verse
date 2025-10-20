@@ -1,5 +1,8 @@
+import { env } from "@/env"
 import { Resolvers } from "@/gql/artifacts/resolvers"
 import { quranSQK } from "@/lib/quran.foundation"
+import { createHash } from "@/utils/hash"
+import { calculateTTL } from "@/utils/ttl"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { LRUCache } from "lru-cache"
 import { NextRequest } from "next/server"
@@ -49,31 +52,32 @@ Output Format:
 - Include only the <mood-label> and <verse-keys> tags, and nothing else.
 `
 
-export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
-  Query: {
-    async getVersesByMood(_, { mood }, context) {
-      const clientIp = context.ip
-      const now = Date.now()
+const aiResponseCache = new LRUCache<string, { verseKeys: string[]; mood: string }>({
+  max: 10_000,
+  ttl: calculateTTL({ days: 2 }),
+})
 
-      const lastRequestTime = rateLimitCache.get(clientIp)
-      if (lastRequestTime && now - lastRequestTime < RATE_LIMIT_WINDOW) {
-        const remainingTime = Math.ceil((RATE_LIMIT_WINDOW - (now - lastRequestTime)) / 1000)
-        throw new Error(
-          `Rate limit exceeded wait ${remainingTime} seconds before making another request.`
-        )
-      }
+function cleanUpInput(input: string) {
+  return input.trim().toLowerCase().replace(/\s+/g, " ")
+}
 
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-      const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash-lite" })
+async function getVerseKeys(input: string) {
+  const hash = createHash(cleanUpInput(input))
 
-      const result = await model
-        .generateContent({
-          contents: [
-            {
-              role: "user",
-              parts: [
-                {
-                  text: `
+  if (aiResponseCache.get(hash)) {
+    return aiResponseCache.get(hash)!
+  }
+
+  const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY!)
+  const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash-lite" })
+
+  const result = await model.generateContent({
+    contents: [
+      {
+        role: "user",
+        parts: [
+          {
+            text: `
                   <you-identity>
                     You are a helpful assistant that suggests Quranic verses based on a user's mood or emotional state, providing spiritual comfort and guidance.
 
@@ -89,39 +93,61 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
                   </system-prompt>
                   
                   <user-mood>
-                   ${mood}
+                   ${input}
                   </user-mood>
                   `,
-                },
-              ],
-            },
-          ],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 500,
           },
-        })
-        .catch(() => {
-          rateLimitCache.set(clientIp, now)
-          throw new Error("Uses limit reached try again shortly")
-        })
+        ],
+      },
+    ],
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 500,
+    },
+  })
 
-      const text = result.response.text()
+  const text = result.response.text()
 
-      const verseKeyMatch = text.match(/<verse-keys>([\s\S]*?)<\/verse-keys>/)
-      if (!verseKeyMatch) throw new Error("No verses found for this mood")
+  const verseKeyMatch = text.match(/<verse-keys>([\s\S]*?)<\/verse-keys>/)
+  if (!verseKeyMatch) throw new Error("No verses found for this mood")
 
-      const moodLabel = text.match(/<mood-label>([\s\S]*?)<\/mood-label>/)?.[1] ?? mood
+  const moodLabel = (text.match(/<mood-label>([\s\S]*?)<\/mood-label>/)?.[1] ?? input).trim()
 
-      const verseKeys = verseKeyMatch[1]
-        .trim()
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line.match(/^\d+:\d+$/))
+  const verseKeys = verseKeyMatch[1]
+    .trim()
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.match(/^\d+:\d+$/))
 
-      if (verseKeys.length === 0) throw new Error("No verses found for this mood")
+  const data = { verseKeys, mood: moodLabel }
 
-      const versePromises = verseKeys.map(async (key) => {
+  if (data.verseKeys.length === 0) throw new Error("No verses found for this mood")
+  aiResponseCache.set(hash, data)
+
+  return data
+}
+
+export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
+  Query: {
+    async getVersesByMood(_, { mood }, context) {
+      const clientIp = context.ip
+      const now = Date.now()
+
+      const lastRequestTime = rateLimitCache.get(clientIp)
+      if (lastRequestTime && now - lastRequestTime < RATE_LIMIT_WINDOW) {
+        const remainingTime = Math.ceil((RATE_LIMIT_WINDOW - (now - lastRequestTime)) / 1000)
+        throw new Error(
+          `Rate limit exceeded wait ${remainingTime} seconds before making another request.`
+        )
+      }
+
+      rateLimitCache.set(clientIp, now)
+
+      const results = await getVerseKeys(mood).catch(() => {
+        throw new Error("Uses limit reached try again shortly")
+      })
+
+      const versePromises = results.verseKeys.map(async (key) => {
         const verse = await quranSQK.getVerse(key, {
           fields: {
             text_uthmani: true,
@@ -162,7 +188,7 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
 
       if (verses.length === 0) throw new Error("No verses could be fetched for this mood")
 
-      const finalResult = { verses, mood: moodLabel.trim() }
+      const finalResult = { verses, mood: results.mood }
       rateLimitCache.set(clientIp, now)
 
       return finalResult
