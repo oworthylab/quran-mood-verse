@@ -7,16 +7,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai"
 import { LRUCache } from "lru-cache"
 import { NextRequest } from "next/server"
 
-const RATE_LIMIT = {
-  WINDOW: 60 * 1000,  // 1 minute (in milliseconds)
-  CACHE_SIZE: 10000  // Maximum number of IPs to track
-}
-const MAX_INPUT_LENGTH = 200 // characters
+const MAX_INPUT_LENGTH = 200
+const RATE_LIMIT_WINDOW_MS = calculateTTL({ seconds: 60 })
 
-
-const rateLimitCache = new LRUCache<string, { count: number; lastRequest: number }>({ 
-  max: RATE_LIMIT.CACHE_SIZE, 
-  ttl: RATE_LIMIT.WINDOW 
+const rateLimitCache = new LRUCache<string, number>({
+  max: 10000,
+  ttl: RATE_LIMIT_WINDOW_MS,
 })
 
 const SYSTEM_PROMPT = `
@@ -62,31 +58,30 @@ Output Format:
 `
 
 const aiResponseCache = new LRUCache<string, { verseKeys: string[]; mood: string }>({
-  max: RATE_LIMIT.CACHE_SIZE,
+  max: 10_000,
   ttl: calculateTTL({ days: 2 }),
 })
 
 function cleanUpInput(input: string) {
-  if (!input || typeof input !== 'string') {
-    throw new Error('Invalid input: mood must be a non-empty string')
-  }
-  
-  if (input.length > MAX_INPUT_LENGTH) {
-    throw new Error(`Input too long: maximum ${MAX_INPUT_LENGTH} characters allowed`)
-  }
-
-  // Remove any HTML tags and normalize whitespace
-  return input
-    .replace(/<[^>]*>/g, '') // Remove HTML tags
+  const cleanInput = input
+    .replace(/<[^>]*>/g, "")
     .trim()
     .toLowerCase()
-    .replace(/\s+/g, ' ')
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+
+  if (cleanInput.length === 0) {
+    throw new Error("Input cannot be empty")
+  }
+
+  if (input.length > MAX_INPUT_LENGTH) {
+    throw new Error(`Input too long (${MAX_INPUT_LENGTH} max)`)
+  }
+
+  return input
 }
 
 async function getVerseKeys(input: string) {
-  if (!env.GEMINI_API_KEY) {
-    throw new Error('API configuration error')
-  }
   const hash = createHash(cleanUpInput(input))
 
   if (aiResponseCache.get(hash)) {
@@ -159,8 +154,8 @@ export const versesResolver: Resolvers<{ request: NextRequest; ip: string }> = {
       const now = Date.now()
 
       const lastRequestTime = rateLimitCache.get(clientIp)
-      if (lastRequestTime && now - lastRequestTime < RATE_LIMIT.WINDOW) {
-        const remainingTime = Math.ceil((RATE_LIMIT.WINDOW - (now - lastRequestTime)) / 1000)
+      if (lastRequestTime && now - lastRequestTime < RATE_LIMIT_WINDOW_MS) {
+        const remainingTime = Math.ceil((RATE_LIMIT_WINDOW_MS - (now - lastRequestTime)) / 1000)
         throw new Error(
           `Rate limit exceeded wait ${remainingTime} seconds before making another request.`
         )
